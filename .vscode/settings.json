@@ -1,0 +1,8 @@
+{
+    "chat.tools.terminal.autoApprove": {
+        "/^grep -r -n \"@nestjs\\\\\\|@prisma\\\\\\|from 'prisma'\" src/domain src/shared \\|\\| true$/": {
+            "approve": true,
+            "matchCommandLine": true
+        }
+    }
+}

@@ -1,3 +1,495 @@
+## API Mellifera — Step 3 : Couche Domaine (implémentation)
+
+## Goal
+Fournir la mise en place complète de la couche domaine (entités, value objects, interfaces de repository, types partagés) en TypeScript pur, prête à être copiée dans `src/domain`.
+
+## Prerequisites
+- Assurez-vous d'être sur la branche `feat/api-mellifera-init`.
+
+### Step-by-Step Instructions
+
+#### Step 1: Ajouter les types partagés et constantes
+- [ ] Créer `src/shared/types.ts`.
+
+```typescript
+// src/shared/types.ts
+export interface PaginationParams {
+  page: number;
+  limit: number;
+  sortBy?: string;
+  sortOrder?: 'asc' | 'desc';
+}
+
+export interface PaginatedResult<T> {
+  items: T[];
+  total: number;
+  page: number;
+  perPage: number;
+  totalPages: number;
+}
+
+export interface SortParams {
+  sortBy?: string;
+  sortOrder?: 'asc' | 'desc';
+}
+
+export type UUID = string;
+
+```
+
+- [ ] Créer `src/shared/constants.ts`.
+
+```typescript
+// src/shared/constants.ts
+export const DEFAULT_PAGE = 1;
+export const DEFAULT_LIMIT = 10;
+
+export const EMAIL_MAX_LENGTH = 254;
+
+export const ROLES = {
+  USER: 'USER',
+  ADMIN: 'ADMIN',
+} as const;
+
+```
+
+##### Step 1 Verification Checklist
+- [ ] Les fichiers `src/shared/types.ts` et `src/shared/constants.ts` existent et exportent les symboles.
+
+#### Step 2: Value Object — Email
+- [ ] Créer `src/domain/user/value-objects/email.vo.ts`.
+
+```typescript
+// src/domain/user/value-objects/email.vo.ts
+export class Email {
+  private readonly _value: string;
+
+  constructor(value: string) {
+    if (!Email.isValid(value)) {
+      throw new Error(`Invalid email: ${value}`);
+    }
+    this._value = value.trim().toLowerCase();
+  }
+
+  static isValid(value: string): boolean {
+    if (!value) return false;
+    if (value.length > 254) return false;
+    // Simple but practical email regex
+    // eslint-disable-next-line no-control-regex
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(value.trim());
+  }
+
+  get value(): string {
+    return this._value;
+  }
+
+  toString(): string {
+    return this._value;
+  }
+
+  equals(other: Email): boolean {
+    return other && this._value === other._value;
+  }
+}
+
+```
+
+##### Step 2 Verification Checklist
+- [ ] Instanciation valide: `new Email('user@example.com')` fonctionne.
+- [ ] Instanciation invalide: `new Email('not-an-email')` lance une erreur.
+
+#### Step 3: Value Object — CoordonneesGps
+- [ ] Créer `src/domain/rucher/value-objects/coordonnees-gps.vo.ts`.
+
+```typescript
+// src/domain/rucher/value-objects/coordonnees-gps.vo.ts
+export class CoordonneesGps {
+  private readonly _latitude: number;
+  private readonly _longitude: number;
+
+  constructor(latitude: number, longitude: number) {
+    if (!Number.isFinite(latitude) || latitude < -90 || latitude > 90) {
+      throw new Error(`Invalid latitude: ${latitude}`);
+    }
+    if (!Number.isFinite(longitude) || longitude < -180 || longitude > 180) {
+      throw new Error(`Invalid longitude: ${longitude}`);
+    }
+    this._latitude = latitude;
+    this._longitude = longitude;
+  }
+
+  get latitude(): number {
+    return this._latitude;
+  }
+
+  get longitude(): number {
+    return this._longitude;
+  }
+
+  toObject(): { latitude: number; longitude: number } {
+    return { latitude: this._latitude, longitude: this._longitude };
+  }
+
+  equals(other: CoordonneesGps): boolean {
+    return (
+      other && this._latitude === other._latitude && this._longitude === other._longitude
+    );
+  }
+}
+
+```
+
+##### Step 3 Verification Checklist
+- [ ] Instanciation valide: `new CoordonneesGps(48.8566, 2.3522)` fonctionne.
+- [ ] Instanciation invalide: latitude hors bornes lance une erreur.
+
+#### Step 4: Entité `User`
+- [ ] Créer `src/domain/user/entities/user.entity.ts`.
+
+```typescript
+// src/domain/user/entities/user.entity.ts
+import { Email } from '../value-objects/email.vo';
+
+export class User {
+  public readonly id: string;
+  public readonly email: Email;
+  private _passwordHash?: string;
+  public readonly role: string;
+  public readonly createdAt: Date;
+  public updatedAt?: Date;
+
+  constructor(params: {
+    id: string;
+    email: Email;
+    passwordHash?: string;
+    role?: string;
+    createdAt?: Date;
+    updatedAt?: Date | null;
+  }) {
+    this.id = params.id;
+    this.email = params.email;
+    this._passwordHash = params.passwordHash;
+    this.role = params.role ?? 'USER';
+    this.createdAt = params.createdAt ?? new Date();
+    this.updatedAt = params.updatedAt ?? undefined;
+  }
+
+  get passwordHash(): string | undefined {
+    return this._passwordHash;
+  }
+
+  setPasswordHash(hash: string) {
+    this._passwordHash = hash;
+    this.touch();
+  }
+
+  touch() {
+    this.updatedAt = new Date();
+  }
+}
+
+```
+
+##### Step 4 Verification Checklist
+- [ ] Créer une instance `new User({ id: 'u1', email: new Email('a@b.com') })`.
+
+#### Step 5: Entité `Rucher`
+- [ ] Créer `src/domain/rucher/entities/rucher.entity.ts`.
+
+```typescript
+// src/domain/rucher/entities/rucher.entity.ts
+import { CoordonneesGps } from '../value-objects/coordonnees-gps.vo';
+
+export class Rucher {
+  public readonly id: string;
+  public readonly ownerId: string;
+  public name: string;
+  public location?: CoordonneesGps;
+  public readonly createdAt: Date;
+  public updatedAt?: Date;
+
+  constructor(params: {
+    id: string;
+    ownerId: string;
+    name: string;
+    location?: CoordonneesGps | null;
+    createdAt?: Date;
+    updatedAt?: Date | null;
+  }) {
+    if (!params.name || params.name.trim().length === 0) {
+      throw new Error('Rucher name must be provided');
+    }
+    this.id = params.id;
+    this.ownerId = params.ownerId;
+    this.name = params.name.trim();
+    this.location = params.location ?? undefined;
+    this.createdAt = params.createdAt ?? new Date();
+    this.updatedAt = params.updatedAt ?? undefined;
+  }
+
+  rename(newName: string) {
+    if (!newName || newName.trim().length === 0) {
+      throw new Error('Rucher name must be provided');
+    }
+    this.name = newName.trim();
+    this.touch();
+  }
+
+  setLocation(location: CoordonneesGps) {
+    this.location = location;
+    this.touch();
+  }
+
+  touch() {
+    this.updatedAt = new Date();
+  }
+}
+
+```
+
+##### Step 5 Verification Checklist
+- [ ] Instance `new Rucher({ id: 'r1', ownerId: 'u1', name: 'Mon Rucher' })`.
+
+#### Step 6: Entité `Ruche`
+- [ ] Créer `src/domain/ruche/entities/ruche.entity.ts`.
+
+```typescript
+// src/domain/ruche/entities/ruche.entity.ts
+
+export type TypeRuche = 'DADANT' | 'LANGSTROTH' | 'NUCLEUS' | 'OTHER';
+export type StatutRuche = 'ACTIVE' | 'INACTIVE' | 'LOST';
+
+export class Ruche {
+  public readonly id: string;
+  public readonly rucherId: string;
+  public name?: string;
+  public type: TypeRuche;
+  public statut: StatutRuche;
+  public readonly createdAt: Date;
+  public updatedAt?: Date;
+
+  constructor(params: {
+    id: string;
+    rucherId: string;
+    name?: string | null;
+    type?: TypeRuche;
+    statut?: StatutRuche;
+    createdAt?: Date;
+    updatedAt?: Date | null;
+  }) {
+    this.id = params.id;
+    this.rucherId = params.rucherId;
+    this.name = params.name ?? undefined;
+    this.type = params.type ?? 'OTHER';
+    this.statut = params.statut ?? 'ACTIVE';
+    this.createdAt = params.createdAt ?? new Date();
+    this.updatedAt = params.updatedAt ?? undefined;
+  }
+
+  setStatus(statut: StatutRuche) {
+    this.statut = statut;
+    this.touch();
+  }
+
+  touch() {
+    this.updatedAt = new Date();
+  }
+}
+
+```
+
+##### Step 6 Verification Checklist
+- [ ] Instance `new Ruche({ id: 'h1', rucherId: 'r1' })` fonctionne.
+
+#### Step 7: Entité `Inspection`
+- [ ] Créer `src/domain/inspection/entities/inspection.entity.ts`.
+
+```typescript
+// src/domain/inspection/entities/inspection.entity.ts
+
+export type EtatGeneral = 'BON' | 'MOYEN' | 'MAUVAIS';
+
+export class Inspection {
+  public readonly id: string;
+  public readonly rucheId: string;
+  public date: Date;
+  public etatGeneral: EtatGeneral;
+  public notes?: string;
+  public readonly createdAt: Date;
+  public updatedAt?: Date;
+
+  constructor(params: {
+    id: string;
+    rucheId: string;
+    date: Date | string;
+    etatGeneral?: EtatGeneral;
+    notes?: string | null;
+    createdAt?: Date;
+    updatedAt?: Date | null;
+  }) {
+    this.id = params.id;
+    this.rucheId = params.rucheId;
+    this.date = params.date instanceof Date ? params.date : new Date(params.date);
+    this.etatGeneral = params.etatGeneral ?? 'BON';
+    this.notes = params.notes ?? undefined;
+    this.createdAt = params.createdAt ?? new Date();
+    this.updatedAt = params.updatedAt ?? undefined;
+  }
+
+  updateEtat(etat: EtatGeneral, notes?: string) {
+    this.etatGeneral = etat;
+    if (notes !== undefined) this.notes = notes;
+    this.touch();
+  }
+
+  touch() {
+    this.updatedAt = new Date();
+  }
+}
+
+```
+
+##### Step 7 Verification Checklist
+- [ ] Instance `new Inspection({ id: 'i1', rucheId: 'h1', date: new Date() })` fonctionne.
+
+#### Step 8: Repository Interfaces (abstract classes)
+- [ ] Créer `src/domain/user/repositories/user.repository.interface.ts`.
+
+```typescript
+// src/domain/user/repositories/user.repository.interface.ts
+import { User } from '../../user/entities/user.entity';
+import { PaginatedResult, PaginationParams } from '../../../shared/types';
+
+export abstract class UserRepository {
+  abstract create(user: User): Promise<User>;
+  abstract findById(id: string): Promise<User | null>;
+  abstract findByEmail(email: string): Promise<User | null>;
+  abstract update(user: User): Promise<User>;
+  abstract delete(id: string): Promise<void>;
+  abstract findAll(pagination?: PaginationParams): Promise<PaginatedResult<User>>;
+}
+
+```
+
+- [ ] Créer `src/domain/rucher/repositories/rucher.repository.interface.ts`.
+
+```typescript
+// src/domain/rucher/repositories/rucher.repository.interface.ts
+import { Rucher } from '../entities/rucher.entity';
+import { PaginatedResult, PaginationParams } from '../../../shared/types';
+
+export abstract class RucherRepository {
+  abstract create(rucher: Rucher): Promise<Rucher>;
+  abstract findById(id: string): Promise<Rucher | null>;
+  abstract update(rucher: Rucher): Promise<Rucher>;
+  abstract delete(id: string): Promise<void>;
+  abstract findAllByOwner(ownerId: string, pagination?: PaginationParams): Promise<PaginatedResult<Rucher>>;
+}
+
+```
+
+- [ ] Créer `src/domain/ruche/repositories/ruche.repository.interface.ts`.
+
+```typescript
+// src/domain/ruche/repositories/ruche.repository.interface.ts
+import { Ruche } from '../entities/ruche.entity';
+import { PaginatedResult, PaginationParams } from '../../../shared/types';
+
+export abstract class RucheRepository {
+  abstract create(ruche: Ruche): Promise<Ruche>;
+  abstract findById(id: string): Promise<Ruche | null>;
+  abstract update(ruche: Ruche): Promise<Ruche>;
+  abstract delete(id: string): Promise<void>;
+  abstract findAllByRucher(rucherId: string, pagination?: PaginationParams): Promise<PaginatedResult<Ruche>>;
+}
+
+```
+
+- [ ] Créer `src/domain/inspection/repositories/inspection.repository.interface.ts`.
+
+```typescript
+// src/domain/inspection/repositories/inspection.repository.interface.ts
+import { Inspection } from '../entities/inspection.entity';
+import { PaginatedResult, PaginationParams } from '../../../shared/types';
+
+export abstract class InspectionRepository {
+  abstract create(inspection: Inspection): Promise<Inspection>;
+  abstract findById(id: string): Promise<Inspection | null>;
+  abstract update(inspection: Inspection): Promise<Inspection>;
+  abstract delete(id: string): Promise<void>;
+  abstract findAllByRuche(rucheId: string, pagination?: PaginationParams, filters?: Record<string, unknown>): Promise<PaginatedResult<Inspection>>;
+}
+
+```
+
+##### Step 8 Verification Checklist
+- [ ] Chaque fichier d'interface est présent et exporte une `abstract class`.
+
+#### Step 9: Export barrels (optionnel mais recommandé)
+- [ ] Ajouter des fichiers `index.ts` pour ré-exporter les éléments si vous le souhaitez. Exemple minimal à copier dans chaque dossier :
+
+```typescript
+// src/domain/user/index.ts
+export * from './entities/user.entity';
+export * from './value-objects/email.vo';
+export * from './repositories/user.repository.interface';
+
+// src/domain/rucher/index.ts
+export * from './entities/rucher.entity';
+export * from './value-objects/coordonnees-gps.vo';
+export * from './repositories/rucher.repository.interface';
+
+// src/domain/ruche/index.ts
+export * from './entities/ruche.entity';
+export * from './repositories/ruche.repository.interface';
+
+// src/domain/inspection/index.ts
+export * from './entities/inspection.entity';
+export * from './repositories/inspection.repository.interface';
+
+// src/shared/index.ts
+export * from '../shared/types';
+export * from '../shared/constants';
+
+```
+
+##### Step 9 Verification Checklist
+- [ ] Les `index.ts` (barrels) exposent les symboles pour `@domain/*` usage.
+
+#### Step 10: STOP & COMMIT
+**STOP & COMMIT:** Arrêtez ici, copiez les fichiers dans le projet (`src/...`) et effectuez un commit. Après vérification locale (compilation TypeScript), revenez pour la suite (repositories infra / handlers).
+
+---
+
+## Tests & vérifications recommandées (commande locale)
+
+1. Copier les fichiers dans `src/` comme indiqué.
+2. Lancer la compilation TypeScript :
+
+```bash
+npm run build
+```
+
+3. Vérifier des exemples rapides dans un REPL TypeScript ou un petit script :
+
+```ts
+import { Email } from './src/domain/user/value-objects/email.vo';
+const e = new Email('dev@example.com');
+console.log(e.toString());
+```
+
+4. Une fois validé, commit :
+
+```bash
+git add src/domain src/shared
+git commit -m "feat(domain): add entities, value objects and repository interfaces (step 3)"
+git push --set-upstream origin feat/api-mellifera-init
+```
+
+## Remarques finales
+- Le code de la couche domaine est volontairement indépendant de Nest et de Prisma (aucune importation). L'adaptation entre la couche infrastructure (Prisma) et la couche domaine doit se faire via des mappers dans `src/infrastructure/repositories/*`.
+- Si vous souhaitez, je peux ensuite générer les adapters Prisma pour ces interfaces (Step 5).
 # API Mellifera — Step 1 : Initialisation du projet NestJS & configuration de base
 
 ## Goal
