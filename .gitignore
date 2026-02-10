@@ -44,6 +44,7 @@ lerna-debug.log*
 
 # Prisma
 prisma/migrations/**/migration_lock.toml
+src/generated
 
 # temp files
 *.swp

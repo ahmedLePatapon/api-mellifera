@@ -38,7 +38,15 @@
             ],
             "@config/*": [
                 "src/config/*"
+            ],
+            "@generated/*": [
+                "src/generated/*"
             ]
         }
-    }
+    },
+    "exclude": [
+        "node_modules",
+        "dist",
+        "src/generated"
+    ]
 }

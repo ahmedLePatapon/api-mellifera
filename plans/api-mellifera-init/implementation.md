@@ -117,13 +117,13 @@ prisma/migrations/**/migration_lock.toml
 ```
 
 ##### Step 1.3 Verification Checklist
-- [ ] Le fichier `.gitignore` existe et contient les entrées pour `.env`, `node_modules`, `dist`, `prisma`
+- [x] Le fichier `.gitignore` existe et contient les entrées pour `.env`, `node_modules`, `dist`, `prisma`
 
 ---
 
 #### Step 1.4 : Créer le fichier `.env.example`
 
-- [ ] Créer le fichier `.env.example` à la racine du projet :
+- [x] Créer le fichier `.env.example` à la racine du projet :
 
 ```dotenv
 # ============================================
@@ -146,14 +146,14 @@ JWT_REFRESH_EXPIRATION="7d"
 ```
 
 ##### Step 1.4 Verification Checklist
-- [ ] Le fichier `.env.example` existe à la racine
-- [ ] Il contient les 5 variables : `PORT`, `DATABASE_URL`, `JWT_SECRET`, `JWT_ACCESS_EXPIRATION`, `JWT_REFRESH_EXPIRATION`
+- [x] Le fichier `.env.example` existe à la racine
+- [x] Il contient les 5 variables : `PORT`, `DATABASE_URL`, `JWT_SECRET`, `JWT_ACCESS_EXPIRATION`, `JWT_REFRESH_EXPIRATION`
 
 ---
 
 #### Step 1.5 : Configurer ESLint
 
-- [ ] Remplacer le contenu de `.eslintrc.js` par :
+- [x] Remplacer le contenu de `.eslintrc.js` par :
 
 ```javascript
 module.exports = {
@@ -188,14 +188,14 @@ module.exports = {
 ```
 
 ##### Step 1.5 Verification Checklist
-- [ ] Le fichier `.eslintrc.js` existe
-- [ ] Les règles TypeScript strictes sont présentes
+- [x] Le fichier `.eslintrc.js` existe
+- [x] Les règles TypeScript strictes sont présentes
 
 ---
 
 #### Step 1.6 : Configurer Prettier
 
-- [ ] Remplacer le contenu de `.prettierrc` par :
+- [x] Remplacer le contenu de `.prettierrc` par :
 
 ```json
 {
@@ -211,13 +211,13 @@ module.exports = {
 ```
 
 ##### Step 1.6 Verification Checklist
-- [ ] Le fichier `.prettierrc` existe avec les bonnes options
+- [x] Le fichier `.prettierrc` existe avec les bonnes options
 
 ---
 
 #### Step 1.7 : Configurer `tsconfig.json` en mode strict
 
-- [ ] Remplacer le contenu de `tsconfig.json` par :
+- [x] Remplacer le contenu de `tsconfig.json` par :
 
 ```json
 {
@@ -254,7 +254,7 @@ module.exports = {
 }
 ```
 
-- [ ] Remplacer le contenu de `tsconfig.build.json` par :
+- [x] Remplacer le contenu de `tsconfig.build.json` par :
 
 ```json
 {
@@ -269,15 +269,15 @@ module.exports = {
 ```
 
 ##### Step 1.7 Verification Checklist
-- [ ] `tsconfig.json` contient `"strict": true` et les `paths` pour l'architecture Clean
-- [ ] `tsconfig.build.json` existe et étend `tsconfig.json`
-- [ ] `npm run build` compile sans erreur
+- [x] `tsconfig.json` contient `"strict": true` et les `paths` pour l'architecture Clean
+- [x] `tsconfig.build.json` existe et étend `tsconfig.json`
+- [x] `npm run build` compile sans erreur
 
 ---
 
 #### Step 1.8 : Configurer `nest-cli.json`
 
-- [ ] Remplacer le contenu de `nest-cli.json` par :
+- [x] Remplacer le contenu de `nest-cli.json` par :
 
 ```json
 {
