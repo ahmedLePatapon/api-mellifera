@@ -3,12 +3,12 @@
 // ============================================
 
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+    provider = "prisma-client"
+    output   = "../src/generated/prisma"
 }
 
 datasource db {
-  provider = "postgresql"
+    provider = "postgresql"
 }
 
 // ============================================
@@ -16,59 +16,59 @@ datasource db {
 // ============================================
 
 enum Role {
-  APICULTEUR
-  ADMIN
+    APICULTEUR
+    ADMIN
 
-  @@map("roles")
+    @@map("roles")
 }
 
 enum TypeRuche {
-  DADANT
-  LANGSTROTH
-  WARRE
-  VOIRNOT
-  KENYANE
-  AUTRE
+    DADANT
+    LANGSTROTH
+    WARRE
+    VOIRNOT
+    KENYANE
+    AUTRE
 
-  @@map("types_ruche")
+    @@map("types_ruche")
 }
 
 enum StatutRuche {
-  ACTIVE
-  INACTIVE
-  MORTE
-  VENDUE
-  ESSAIMEE
+    ACTIVE
+    INACTIVE
+    MORTE
+    VENDUE
+    ESSAIMEE
 
-  @@map("statuts_ruche")
+    @@map("statuts_ruche")
 }
 
 enum EtatGeneral {
-  EXCELLENT
-  BON
-  MOYEN
-  FAIBLE
-  CRITIQUE
+    EXCELLENT
+    BON
+    MOYEN
+    FAIBLE
+    CRITIQUE
 
-  @@map("etats_general")
+    @@map("etats_general")
 }
 
 enum NiveauReserve {
-  ABONDANT
-  SUFFISANT
-  FAIBLE
-  VIDE
+    ABONDANT
+    SUFFISANT
+    FAIBLE
+    VIDE
 
-  @@map("niveaux_reserve")
+    @@map("niveaux_reserve")
 }
 
 enum Comportement {
-  CALME
-  AGITE
-  AGRESSIF
-  NORMAL
+    CALME
+    AGITE
+    AGRESSIF
+    NORMAL
 
-  @@map("comportements")
+    @@map("comportements")
 }
 
 // ============================================
@@ -76,92 +76,92 @@ enum Comportement {
 // ============================================
 
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  password  String
-  nom       String
-  prenom    String
-  role      Role     @default(APICULTEUR)
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+    id        String   @id @default(uuid())
+    email     String   @unique
+    password  String
+    nom       String
+    prenom    String
+    role      Role     @default(APICULTEUR)
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
 
-  ruchers       Rucher[]
-  refreshTokens RefreshToken[]
+    ruchers       Rucher[]
+    refreshTokens RefreshToken[]
 
-  @@map("users")
+    @@map("users")
 }
 
 model Rucher {
-  id          String   @id @default(uuid())
-  nom         String
-  adresse     String?
-  latitude    Float?
-  longitude   Float?
-  description String?
-  userId      String   @map("user_id")
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
+    id          String   @id @default(uuid())
+    nom         String
+    adresse     String?
+    latitude    Float?
+    longitude   Float?
+    description String?
+    userId      String   @map("user_id")
+    createdAt   DateTime @default(now()) @map("created_at")
+    updatedAt   DateTime @updatedAt @map("updated_at")
 
-  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  ruches Ruche[]
+    user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+    ruches Ruche[]
 
-  @@index([userId])
-  @@map("ruchers")
+    @@index([userId])
+    @@map("ruchers")
 }
 
 model Ruche {
-  id        String      @id @default(uuid())
-  nom       String
-  type      TypeRuche   @default(DADANT)
-  statut    StatutRuche @default(ACTIVE)
-  dateAchat DateTime?   @map("date_achat")
-  notes     String?
-  rucherId  String      @map("rucher_id")
-  createdAt DateTime    @default(now()) @map("created_at")
-  updatedAt DateTime    @updatedAt @map("updated_at")
+    id        String      @id @default(uuid())
+    nom       String
+    type      TypeRuche   @default(DADANT)
+    statut    StatutRuche @default(ACTIVE)
+    dateAchat DateTime?   @map("date_achat")
+    notes     String?
+    rucherId  String      @map("rucher_id")
+    createdAt DateTime    @default(now()) @map("created_at")
+    updatedAt DateTime    @updatedAt @map("updated_at")
 
-  rucher      Rucher       @relation(fields: [rucherId], references: [id], onDelete: Cascade)
-  inspections Inspection[]
+    rucher      Rucher       @relation(fields: [rucherId], references: [id], onDelete: Cascade)
+    inspections Inspection[]
 
-  @@index([rucherId])
-  @@map("ruches")
+    @@index([rucherId])
+    @@map("ruches")
 }
 
 model Inspection {
-  id               String         @id @default(uuid())
-  date             DateTime
-  etatGeneral      EtatGeneral    @map("etat_general")
-  niveauReserve    NiveauReserve? @map("niveau_reserve")
-  comportement     Comportement?
-  presenceReine    Boolean?       @map("presence_reine")
-  nombreCadres     Int?           @map("nombre_cadres")
-  presenceMaladie  Boolean?       @default(false) @map("presence_maladie")
-  descriptionMaladie String?      @map("description_maladie")
-  traitementApplique String?      @map("traitement_applique")
-  recolteKg        Float?         @map("recolte_kg")
-  notes            String?
-  rucheId          String         @map("ruche_id")
-  createdAt        DateTime       @default(now()) @map("created_at")
-  updatedAt        DateTime       @updatedAt @map("updated_at")
+    id                 String         @id @default(uuid())
+    date               DateTime
+    etatGeneral        EtatGeneral    @map("etat_general")
+    niveauReserve      NiveauReserve? @map("niveau_reserve")
+    comportement       Comportement?
+    presenceReine      Boolean?       @map("presence_reine")
+    nombreCadres       Int?           @map("nombre_cadres")
+    presenceMaladie    Boolean?       @default(false) @map("presence_maladie")
+    descriptionMaladie String?        @map("description_maladie")
+    traitementApplique String?        @map("traitement_applique")
+    recolteKg          Float?         @map("recolte_kg")
+    notes              String?
+    rucheId            String         @map("ruche_id")
+    createdAt          DateTime       @default(now()) @map("created_at")
+    updatedAt          DateTime       @updatedAt @map("updated_at")
 
-  ruche Ruche @relation(fields: [rucheId], references: [id], onDelete: Cascade)
+    ruche Ruche @relation(fields: [rucheId], references: [id], onDelete: Cascade)
 
-  @@index([rucheId])
-  @@index([date])
-  @@map("inspections")
+    @@index([rucheId])
+    @@index([date])
+    @@map("inspections")
 }
 
 model RefreshToken {
-  id        String    @id @default(uuid())
-  token     String    @unique
-  userId    String    @map("user_id")
-  expiresAt DateTime  @map("expires_at")
-  revokedAt DateTime? @map("revoked_at")
-  createdAt DateTime  @default(now()) @map("created_at")
+    id        String    @id @default(uuid())
+    token     String    @unique
+    userId    String    @map("user_id")
+    expiresAt DateTime  @map("expires_at")
+    revokedAt DateTime? @map("revoked_at")
+    createdAt DateTime  @default(now()) @map("created_at")
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@index([userId])
-  @@index([token])
-  @@map("refresh_tokens")
+    @@index([userId])
+    @@index([token])
+    @@map("refresh_tokens")
 }
