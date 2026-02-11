@@ -13,7 +13,7 @@ Si ce n'est pas le cas, basculer sur cette branche. Si elle n'existe pas, la cr�
 
 #### Step 5.1 : Créer `PrismaUserRepository`
 
-- [ ] Créer le fichier `src/infrastructure/repositories/prisma-user.repository.ts` :
+- [x] Créer le fichier `src/infrastructure/repositories/prisma-user.repository.ts` :
 
 ```typescript
 import { Injectable } from '@nestjs/common';
@@ -116,7 +116,7 @@ export class PrismaUserRepository implements IUserRepository {
 
 #### Step 5.2 : Créer `PrismaRefreshTokenRepository`
 
-- [ ] Créer le fichier `src/infrastructure/repositories/prisma-refresh-token.repository.ts` :
+- [x] Créer le fichier `src/infrastructure/repositories/prisma-refresh-token.repository.ts` :
 
 ```typescript
 import { Injectable } from '@nestjs/common';
@@ -195,7 +195,7 @@ export class PrismaRefreshTokenRepository implements IRefreshTokenRepository {
 
 #### Step 5.3 : Créer `PrismaRucherRepository`
 
-- [ ] Créer le fichier `src/infrastructure/repositories/prisma-rucher.repository.ts` :
+- [x] Créer le fichier `src/infrastructure/repositories/prisma-rucher.repository.ts` :
 
 ```typescript
 import { Injectable } from '@nestjs/common';
@@ -351,7 +351,7 @@ export class PrismaRucherRepository implements IRucherRepository {
 
 #### Step 5.4 : Créer `PrismaRucheRepository`
 
-- [ ] Créer le fichier `src/infrastructure/repositories/prisma-ruche.repository.ts` :
+- [x] Créer le fichier `src/infrastructure/repositories/prisma-ruche.repository.ts` :
 
 ```typescript
 import { Injectable } from '@nestjs/common';
@@ -495,7 +495,7 @@ export class PrismaRucheRepository implements IRucheRepository {
 
 #### Step 5.5 : Créer `PrismaInspectionRepository`
 
-- [ ] Créer le fichier `src/infrastructure/repositories/prisma-inspection.repository.ts` :
+- [x] Créer le fichier `src/infrastructure/repositories/prisma-inspection.repository.ts` :
 
 ```typescript
 import { Injectable } from '@nestjs/common';
@@ -677,7 +677,7 @@ export class PrismaInspectionRepository implements IInspectionRepository {
 
 #### Step 5.6 : Créer le barrel export `src/infrastructure/repositories/index.ts`
 
-- [ ] Créer le fichier `src/infrastructure/repositories/index.ts` :
+- [x] Créer le fichier `src/infrastructure/repositories/index.ts` :
 
 ```typescript
 export { PrismaUserRepository } from './prisma-user.repository';
@@ -691,7 +691,7 @@ export { PrismaInspectionRepository } from './prisma-inspection.repository';
 
 #### Step 5.7 : Mettre à jour `AppModule` pour enregistrer les repositories
 
-- [ ] Remplacer le contenu de `src/app.module.ts` par :
+- [x] Remplacer le contenu de `src/app.module.ts` par :
 
 ```typescript
 import { Module } from '@nestjs/common';
@@ -782,16 +782,16 @@ export class AppModule {}
 
 ##### Step 5 Verification Checklist
 
-- [ ] Le répertoire `src/infrastructure/repositories/` contient 6 fichiers :
+- [x] Le répertoire `src/infrastructure/repositories/` contient 6 fichiers :
   - `prisma-user.repository.ts`
   - `prisma-refresh-token.repository.ts`
   - `prisma-rucher.repository.ts`
   - `prisma-ruche.repository.ts`
   - `prisma-inspection.repository.ts`
   - `index.ts`
-- [ ] `src/app.module.ts` enregistre les 5 repository providers avec les tokens Symbol et tous les handlers CQRS.
-- [ ] Exécuter `npm run build` — aucune erreur de compilation.
-- [ ] Vérifier que chaque repository :
+ - [x] `src/app.module.ts` enregistre les 5 repository providers avec les tokens Symbol et tous les handlers CQRS.
+ - [x] Exécuter `npm run build` — aucune erreur de compilation.
+ - [x] Vérifier que chaque repository :
   - Implémente correctement l'interface correspondante
   - Mappe correctement Prisma → Entité Domaine via `fromPersistence()`
   - Gère le Value Object `Email` (toString/create) pour `UserRepository`

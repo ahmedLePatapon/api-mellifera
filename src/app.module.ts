@@ -2,6 +2,8 @@ import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { AppConfigModule } from './config/config.module';
 import { PrismaModule } from './infrastructure/prisma/prisma.module';
+import { AuthModule } from './infrastructure/auth/auth.module';
+import { AuthController } from './interfaces/auth/auth.controller';
 
 import {
     USER_REPOSITORY,
@@ -71,12 +73,8 @@ const RepositoryProviders = [
 ];
 
 @Module({
-    imports: [AppConfigModule, PrismaModule, CqrsModule.forRoot()],
-    controllers: [],
-    providers: [
-        ...RepositoryProviders,
-        ...CommandHandlers,
-        ...QueryHandlers,
-    ],
+    imports: [AppConfigModule, PrismaModule, CqrsModule.forRoot(), AuthModule],
+    controllers: [AuthController],
+    providers: [...RepositoryProviders, ...CommandHandlers, ...QueryHandlers],
 })
 export class AppModule { }
