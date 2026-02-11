@@ -464,12 +464,12 @@ Tous les endpoints de liste supportent la pagination et le tri :
 | Réponses HTTP | Codes 200/201/204/400/401/404/409 documentés par endpoint |
 
 ##### Step 8.4 Verification Checklist
-- [ ] `npm run build` : zéro erreur
-- [ ] Swagger UI accessible à `http://localhost:3000/api`
-- [ ] Les 4 tags sont visibles et groupent correctement les endpoints
-- [ ] Le paramètre `search` apparaît sur `GET /ruchers`
-- [ ] Tous les DTOs affichent leurs propriétés avec types et exemples
-- [ ] Le bouton Authorize fonctionne et accepte un JWT
+ - [x] `npm run build` : zéro erreur
+ - [x] Swagger UI accessible à `http://localhost:3000/api`
+ - [x] Les 4 tags sont visibles et groupent correctement les endpoints
+ - [x] Le paramètre `search` apparaît sur `GET /ruchers`
+ - [x] Tous les DTOs affichent leurs propriétés avec types et exemples
+ - [x] Le bouton Authorize fonctionne et accepte un JWT
 
 #### Step 8.4 STOP & COMMIT
 **STOP & COMMIT:** Agent must stop here and wait for the user to test, stage, and commit the change.
