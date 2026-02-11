@@ -4,6 +4,9 @@ import { AppConfigModule } from './config/config.module';
 import { PrismaModule } from './infrastructure/prisma/prisma.module';
 import { AuthModule } from './infrastructure/auth/auth.module';
 import { AuthController } from './interfaces/auth/auth.controller';
+import { RucherController } from './interfaces/rucher/rucher.controller';
+import { RucheController } from './interfaces/ruche/ruche.controller';
+import { InspectionController } from './interfaces/inspection/inspection.controller';
 
 import {
     USER_REPOSITORY,
@@ -74,7 +77,7 @@ const RepositoryProviders = [
 
 @Module({
     imports: [AppConfigModule, PrismaModule, CqrsModule.forRoot(), AuthModule],
-    controllers: [AuthController],
+    controllers: [AuthController, RucherController, RucheController, InspectionController],
     providers: [...RepositoryProviders, ...CommandHandlers, ...QueryHandlers],
 })
 export class AppModule { }

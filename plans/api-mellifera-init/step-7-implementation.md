@@ -16,7 +16,7 @@ Créer les contrôleurs REST complets pour Ruchers, Ruches et Inspections avec D
 
 #### Step 7.1 : Créer le DTO de pagination partagé
 
-- [ ] Créer `src/interfaces/common/dto/pagination.dto.ts` :
+ - [x] Créer `src/interfaces/common/dto/pagination.dto.ts` :
 
 ```typescript
 import { IsOptional, IsInt, Min, Max, IsString, IsIn } from 'class-validator';
@@ -52,13 +52,13 @@ export class PaginationQueryDto {
 }
 ```
 
-- [ ] Créer `src/interfaces/common/dto/index.ts` :
+ - [x] Créer `src/interfaces/common/dto/index.ts` :
 
 ```typescript
 export { PaginationQueryDto } from './pagination.dto';
 ```
 
-- [ ] Mettre à jour `src/interfaces/common/index.ts` pour exporter les DTOs :
+ - [x] Mettre à jour `src/interfaces/common/index.ts` pour exporter les DTOs :
 
 ```typescript
 export { CurrentUser, JwtPayload } from './decorators';
@@ -77,7 +77,7 @@ export { PaginationQueryDto } from './dto';
 
 #### Step 7.2 : Créer le `HttpExceptionFilter` et le `TransformInterceptor`
 
-- [ ] Créer `src/interfaces/common/filters/http-exception.filter.ts` :
+ - [x] Créer `src/interfaces/common/filters/http-exception.filter.ts` :
 
 ```typescript
 import {
@@ -146,14 +146,14 @@ export class HttpExceptionFilter implements ExceptionFilter {
 }
 ```
 
-- [ ] Créer `src/interfaces/common/filters/index.ts` :
+ - [x] Créer `src/interfaces/common/filters/index.ts` :
 
 ```typescript
 export { HttpExceptionFilter } from './http-exception.filter';
 export type { ErrorResponse } from './http-exception.filter';
 ```
 
-- [ ] Créer `src/interfaces/common/interceptors/transform.interceptor.ts` :
+ - [x] Créer `src/interfaces/common/interceptors/transform.interceptor.ts` :
 
 ```typescript
 import {
@@ -223,15 +223,14 @@ export class TransformInterceptor<T> implements NestInterceptor<T, ApiResponse<T
 }
 ```
 
-- [ ] Créer `src/interfaces/common/interceptors/index.ts` :
+ - [x] Créer `src/interfaces/common/interceptors/index.ts` :
 
 ```typescript
 export { TransformInterceptor } from './transform.interceptor';
 export type { ApiResponse } from './transform.interceptor';
 ```
 
-- [ ] Mettre à jour `src/interfaces/common/index.ts` pour exporter les nouveaux éléments :
-
+ - [x] Mettre à jour `src/interfaces/common/index.ts` pour exporter les nouveaux éléments :
 ```typescript
 export { CurrentUser, JwtPayload } from './decorators';
 export { OwnershipGuard, SetResourceType, RESOURCE_TYPE_KEY } from './guards';
@@ -253,7 +252,7 @@ export type { ApiResponse } from './interceptors';
 
 #### Step 7.3 : Enregistrer le filtre et l'intercepteur globalement dans `main.ts`
 
-- [ ] Mettre à jour `src/main.ts` pour ajouter le filtre d'exception et l'intercepteur globalement :
+ - [x] Mettre à jour `src/main.ts` pour ajouter le filtre d'exception et l'intercepteur globalement :
 
 ```typescript
 import { NestFactory } from '@nestjs/core';
@@ -340,6 +339,7 @@ void bootstrap();
 #### Step 7.4 : Créer les DTOs et le contrôleur Rucher
 
 - [ ] Créer `src/interfaces/rucher/dto/create-rucher.dto.ts` :
+ - [x] Créer `src/interfaces/rucher/dto/create-rucher.dto.ts` :
 
 ```typescript
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
@@ -393,7 +393,7 @@ export class CreateRucherDto {
 }
 ```
 
-- [ ] Créer `src/interfaces/rucher/dto/update-rucher.dto.ts` :
+ - [x] Créer `src/interfaces/rucher/dto/update-rucher.dto.ts` :
 
 ```typescript
 import { ApiPropertyOptional } from '@nestjs/swagger';
@@ -446,14 +446,14 @@ export class UpdateRucherDto {
 }
 ```
 
-- [ ] Créer `src/interfaces/rucher/dto/index.ts` :
+ - [x] Créer `src/interfaces/rucher/dto/index.ts` :
 
 ```typescript
 export { CreateRucherDto } from './create-rucher.dto';
 export { UpdateRucherDto } from './update-rucher.dto';
 ```
 
-- [ ] Créer `src/interfaces/rucher/rucher.controller.ts` :
+ - [x] Créer `src/interfaces/rucher/rucher.controller.ts` :
 
 ```typescript
 import {
@@ -603,7 +603,7 @@ export class RucherController {
 }
 ```
 
-- [ ] Créer `src/interfaces/rucher/index.ts` :
+ - [x] Créer `src/interfaces/rucher/index.ts` :
 
 ```typescript
 export { RucherController } from './rucher.controller';
@@ -621,7 +621,7 @@ export { UpdateRucherDto } from './dto/update-rucher.dto';
 
 #### Step 7.5 : Créer les DTOs, filtres et le contrôleur Ruche
 
-- [ ] Créer `src/interfaces/ruche/dto/create-ruche.dto.ts` :
+ - [x] Créer `src/interfaces/ruche/dto/create-ruche.dto.ts` :
 
 ```typescript
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
@@ -670,7 +670,7 @@ export class CreateRucheDto {
 }
 ```
 
-- [ ] Créer `src/interfaces/ruche/dto/update-ruche.dto.ts` :
+ - [x] Créer `src/interfaces/ruche/dto/update-ruche.dto.ts` :
 
 ```typescript
 import { ApiPropertyOptional } from '@nestjs/swagger';
@@ -718,7 +718,7 @@ export class UpdateRucheDto {
 }
 ```
 
-- [ ] Créer `src/interfaces/ruche/dto/filter-ruche.dto.ts` :
+ - [x] Créer `src/interfaces/ruche/dto/filter-ruche.dto.ts` :
 
 ```typescript
 import { ApiPropertyOptional } from '@nestjs/swagger';
@@ -740,7 +740,7 @@ export class FilterRucheDto {
 }
 ```
 
-- [ ] Créer `src/interfaces/ruche/dto/index.ts` :
+ - [x] Créer `src/interfaces/ruche/dto/index.ts` :
 
 ```typescript
 export { CreateRucheDto } from './create-ruche.dto';
@@ -748,7 +748,7 @@ export { UpdateRucheDto } from './update-ruche.dto';
 export { FilterRucheDto } from './filter-ruche.dto';
 ```
 
-- [ ] Créer `src/interfaces/ruche/ruche.controller.ts` :
+ - [x] Créer `src/interfaces/ruche/ruche.controller.ts` :
 
 ```typescript
 import {
@@ -913,7 +913,7 @@ export class RucheController {
 }
 ```
 
-- [ ] Créer `src/interfaces/ruche/index.ts` :
+ - [x] Créer `src/interfaces/ruche/index.ts` :
 
 ```typescript
 export { RucheController } from './ruche.controller';
@@ -932,7 +932,7 @@ export { FilterRucheDto } from './dto/filter-ruche.dto';
 
 #### Step 7.6 : Créer les DTOs, filtres et le contrôleur Inspection
 
-- [ ] Créer `src/interfaces/inspection/dto/create-inspection.dto.ts` :
+ - [x] Créer `src/interfaces/inspection/dto/create-inspection.dto.ts` :
 
 ```typescript
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
@@ -1023,7 +1023,7 @@ export class CreateInspectionDto {
 }
 ```
 
-- [ ] Créer `src/interfaces/inspection/dto/update-inspection.dto.ts` :
+ - [x] Créer `src/interfaces/inspection/dto/update-inspection.dto.ts` :
 
 ```typescript
 import { ApiPropertyOptional } from '@nestjs/swagger';
@@ -1113,7 +1113,7 @@ export class UpdateInspectionDto {
 }
 ```
 
-- [ ] Créer `src/interfaces/inspection/dto/filter-inspection.dto.ts` :
+ - [x] Créer `src/interfaces/inspection/dto/filter-inspection.dto.ts` :
 
 ```typescript
 import { ApiPropertyOptional } from '@nestjs/swagger';
@@ -1141,7 +1141,7 @@ export class FilterInspectionDto {
 }
 ```
 
-- [ ] Créer `src/interfaces/inspection/dto/index.ts` :
+ - [x] Créer `src/interfaces/inspection/dto/index.ts` :
 
 ```typescript
 export { CreateInspectionDto } from './create-inspection.dto';
@@ -1149,7 +1149,7 @@ export { UpdateInspectionDto } from './update-inspection.dto';
 export { FilterInspectionDto } from './filter-inspection.dto';
 ```
 
-- [ ] Créer `src/interfaces/inspection/inspection.controller.ts` :
+ - [x] Créer `src/interfaces/inspection/inspection.controller.ts` :
 
 ```typescript
 import {
@@ -1323,7 +1323,7 @@ export class InspectionController {
 }
 ```
 
-- [ ] Créer `src/interfaces/inspection/index.ts` :
+ - [x] Créer `src/interfaces/inspection/index.ts` :
 
 ```typescript
 export { InspectionController } from './inspection.controller';
@@ -1342,7 +1342,7 @@ export { FilterInspectionDto } from './dto/filter-inspection.dto';
 
 #### Step 7.7 : Mettre à jour `AppModule` pour enregistrer les nouveaux contrôleurs
 
-- [ ] Mettre à jour `src/app.module.ts` avec le contenu complet suivant :
+ - [x] Mettre à jour `src/app.module.ts` avec le contenu complet suivant :
 
 ```typescript
 import { Module } from '@nestjs/common';

@@ -2,6 +2,8 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe, Logger } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import { HttpExceptionFilter } from '@interfaces/common/filters/http-exception.filter';
+import { TransformInterceptor } from '@interfaces/common/interceptors/transform.interceptor';
 
 async function bootstrap(): Promise<void> {
     const logger = new Logger('Bootstrap');
@@ -9,6 +11,12 @@ async function bootstrap(): Promise<void> {
 
     // Global prefix
     app.setGlobalPrefix('api/v1');
+
+    // Global exception filter
+    app.useGlobalFilters(new HttpExceptionFilter());
+
+    // Global response transform interceptor
+    app.useGlobalInterceptors(new TransformInterceptor());
 
     // Validation pipe
     app.useGlobalPipes(
