@@ -2492,7 +2492,7 @@ export { GetInspectionHandler } from './queries/get-inspection.handler';
 
 #### Step 4.5 : Barrel Export & Mise à jour AppModule avec CqrsModule
 
-- [ ] Créer `src/application/index.ts` :
+ - [x] Créer `src/application/index.ts` :
 
 ```typescript
 // User
@@ -2546,7 +2546,7 @@ export {
 } from './inspection';
 ```
 
-- [ ] Mettre à jour `src/app.module.ts` pour importer `CqrsModule` :
+ - [x] Mettre à jour `src/app.module.ts` pour importer `CqrsModule` :
 
 ```typescript
 import { Module } from '@nestjs/common';
@@ -2563,10 +2563,10 @@ export class AppModule {}
 ```
 
 ##### Step 4.5 Verification Checklist
-- [ ] `npm run build` compile sans erreur
-- [ ] Le barrel export `src/application/index.ts` exporte les 20 classes (10 commands/queries + 10 handlers)
-- [ ] `CqrsModule.forRoot()` est présent dans les imports de `AppModule`
-- [ ] `npm run start:dev` démarre sans erreur
+ - [x] `npm run build` compile sans erreur
+ - [x] Le barrel export `src/application/index.ts` exporte les 20 classes (10 commands/queries + 10 handlers)
+ - [x] `CqrsModule.forRoot()` est présent dans les imports de `AppModule`
+ - [ ] `npm run start:dev` démarre sans erreur
 
 #### Step 4.5 STOP & COMMIT
 **STOP & COMMIT:** Agent must stop here and wait for the user to test, stage, and commit the change.
