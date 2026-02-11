@@ -7,7 +7,12 @@
         "start": "node dist/main.js",
         "start:dev": "nest start --watch",
         "lint": "eslint . --ext .ts",
-        "format": "prettier --write \"**/*.{ts,js,json,md}\""
+        "format": "prettier --write \"**/*.{ts,js,json,md}\"",
+        "test": "jest",
+        "test:unit": "jest --testPathPattern=test/unit",
+        "test:integration": "jest --testPathPattern=test/integration",
+        "test:e2e": "jest --testPathPattern=test/e2e --forceExit --detectOpenHandles",
+        "test:cov": "jest --coverage"
     },
     "dependencies": {
         "@nestjs/common": "^11.0.0",
@@ -29,15 +34,20 @@
     },
     "devDependencies": {
         "@nestjs/cli": "^11.0.16",
+        "@nestjs/testing": "^11.0.0",
         "@types/bcrypt": "^6.0.0",
+        "@types/jest": "^30.0.0",
         "@types/passport-jwt": "^4.0.1",
         "@types/pg": "^8.16.0",
         "@types/supertest": "^6.0.3",
         "@typescript-eslint/eslint-plugin": "^6.0.0",
         "@typescript-eslint/parser": "^6.0.0",
         "eslint": "^8.0.0",
+        "jest": "^30.0.0",
         "prettier": "^2.0.0",
         "prisma": "^7.3.0",
+        "supertest": "^7.0.0",
+        "ts-jest": "^29.0.0",
         "ts-node": "^10.0.0",
         "typescript": "^5.0.0"
     }
