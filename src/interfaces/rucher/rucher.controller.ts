@@ -18,6 +18,7 @@ import {
     ApiResponse,
     ApiBearerAuth,
     ApiParam,
+    ApiQuery,
 } from '@nestjs/swagger';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { JwtAuthGuard } from '@infrastructure/auth/jwt-auth.guard';
@@ -68,6 +69,13 @@ export class RucherController {
 
     @Get()
     @ApiOperation({ summary: 'Lister ses ruchers avec pagination et recherche' })
+    @ApiQuery({
+        name: 'search',
+        required: false,
+        type: String,
+        description: 'Rechercher par nom ou adresse du rucher',
+        example: 'Lavande',
+    })
     @ApiResponse({ status: 200, description: 'Liste paginée des ruchers' })
     @ApiResponse({ status: 401, description: 'Non authentifié' })
     async findAll(
