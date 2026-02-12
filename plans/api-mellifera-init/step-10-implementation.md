@@ -38,7 +38,7 @@ npm install --save-dev eslint-plugin-prettier eslint-config-prettier husky lint-
 
 L'ESLint config actuelle ne couvre pas `src/generated/` dans les `ignorePatterns` et manque quelques règles utiles. On la finalise.
 
-- [ ] Remplacer le contenu complet de `.eslintrc.js` par :
+- [x] Remplacer le contenu complet de `.eslintrc.js` par :
 
 ```javascript
 module.exports = {
@@ -92,7 +92,7 @@ module.exports = {
 ```
 
 ##### Step 2 Verification Checklist
-- [ ] `npm run lint` s'exécute sans erreur de configuration ESLint (des warnings sont acceptables)
+- [x] `npm run lint` s'exécute sans erreur de configuration ESLint (des warnings sont acceptables)
 
 #### Step 2 STOP & COMMIT
 **STOP & COMMIT:** Agent must stop here and wait for the user to test, stage, and commit the change.
