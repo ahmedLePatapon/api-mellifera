@@ -81,10 +81,10 @@ describe('Auth (e2e)', () => {
 
   describe('POST /api/v1/auth/register', () => {
     it('should register a new user and return tokens', async () => {
-      const res = await request(app.getHttpServer())
+      const res = (await request(app.getHttpServer())
         .post('/api/v1/auth/register')
         .send(validUser)
-        .expect(201);
+        .expect(201)) as request.Response;
 
       expect(res.body.data).toHaveProperty('user');
       expect(res.body.data).toHaveProperty('tokens');
@@ -98,10 +98,10 @@ describe('Auth (e2e)', () => {
     it('should return 409 for duplicate email', async () => {
       await request(app.getHttpServer()).post('/api/v1/auth/register').send(validUser).expect(201);
 
-      const res = await request(app.getHttpServer())
+      const res = (await request(app.getHttpServer())
         .post('/api/v1/auth/register')
         .send(validUser)
-        .expect(409);
+        .expect(409)) as request.Response;
 
       expect(res.body.statusCode).toBe(409);
     });
@@ -118,10 +118,10 @@ describe('Auth (e2e)', () => {
     it('should login and return tokens', async () => {
       await request(app.getHttpServer()).post('/api/v1/auth/register').send(validUser).expect(201);
 
-      const res = await request(app.getHttpServer())
+      const res = (await request(app.getHttpServer())
         .post('/api/v1/auth/login')
         .send({ email: validUser.email, password: validUser.password })
-        .expect(200);
+        .expect(200)) as request.Response;
 
       expect(res.body.data.tokens.accessToken).toBeDefined();
       expect(res.body.data.tokens.refreshToken).toBeDefined();
@@ -146,27 +146,27 @@ describe('Auth (e2e)', () => {
 
   describe('POST /api/v1/auth/refresh', () => {
     it('should refresh tokens with a valid refresh token', async () => {
-      const registerRes = await request(app.getHttpServer())
+      const registerRes = (await request(app.getHttpServer())
         .post('/api/v1/auth/register')
         .send(validUser)
-        .expect(201);
+        .expect(201)) as request.Response;
 
       const refreshToken = registerRes.body.data.tokens.refreshToken;
 
-      const res = await request(app.getHttpServer())
+      const res = (await request(app.getHttpServer())
         .post('/api/v1/auth/refresh')
         .send({ refreshToken })
-        .expect(200);
+        .expect(200)) as request.Response;
 
       expect(res.body.data.accessToken).toBeDefined();
       expect(res.body.data.refreshToken).toBeDefined();
     });
 
     it('should reject an already-used refresh token (rotation)', async () => {
-      const registerRes = await request(app.getHttpServer())
+      const registerRes = (await request(app.getHttpServer())
         .post('/api/v1/auth/register')
         .send(validUser)
-        .expect(201);
+        .expect(201)) as request.Response;
 
       const refreshToken = registerRes.body.data.tokens.refreshToken;
 
@@ -193,11 +193,11 @@ describe('Auth (e2e)', () => {
 
       const { accessToken, refreshToken } = registerRes.body.data.tokens;
 
-      const res = await request(app.getHttpServer())
+      const res = (await request(app.getHttpServer())
         .post('/api/v1/auth/logout')
         .set('Authorization', `Bearer ${accessToken}`)
         .send({ refreshToken })
-        .expect(200);
+        .expect(200)) as request.Response;
 
       expect(res.body.data.message).toBe('Logout successful');
     });

@@ -63,24 +63,24 @@ describe('Inspection (e2e)', () => {
     await app.init();
 
     // Register → create rucher → create ruche
-    const authRes = await request(app.getHttpServer()).post('/api/v1/auth/register').send({
+    const authRes = (await request(app.getHttpServer()).post('/api/v1/auth/register').send({
       email: 'inspection@test.com',
       password: 'Password123!',
       nom: 'Test',
       prenom: 'User',
-    });
+    })) as request.Response;
     accessToken = authRes.body.data.tokens.accessToken;
 
-    const rucherRes = await request(app.getHttpServer())
+    const rucherRes = (await request(app.getHttpServer())
       .post('/api/v1/ruchers')
       .set('Authorization', `Bearer ${accessToken}`)
-      .send({ nom: 'Rucher Inspections' });
+      .send({ nom: 'Rucher Inspections' })) as request.Response;
     const rucherId = rucherRes.body.data.id;
 
-    const rucheRes = await request(app.getHttpServer())
+    const rucheRes = (await request(app.getHttpServer())
       .post(`/api/v1/ruchers/${rucherId}/ruches`)
       .set('Authorization', `Bearer ${accessToken}`)
-      .send({ nom: 'Ruche Inspections' });
+      .send({ nom: 'Ruche Inspections' })) as request.Response;
     rucheId = rucheRes.body.data.id;
   });
 
@@ -90,11 +90,11 @@ describe('Inspection (e2e)', () => {
 
   describe('POST /api/v1/ruches/:rucheId/inspections', () => {
     it('should create an inspection', async () => {
-      const res = await request(app.getHttpServer())
+      const res = (await request(app.getHttpServer())
         .post(`/api/v1/ruches/${rucheId}/inspections`)
         .set('Authorization', `Bearer ${accessToken}`)
         .send({ date: '2025-06-15', etatGeneral: 'BON', presenceReine: true, nombreCadres: 7 })
-        .expect(201);
+        .expect(201)) as request.Response;
 
       expect(res.body.data.etatGeneral).toBe('BON');
       expect(res.body.data.rucheId).toBe(rucheId);
@@ -117,10 +117,10 @@ describe('Inspection (e2e)', () => {
         .set('Authorization', `Bearer ${accessToken}`)
         .send({ date: '2025-07-01', etatGeneral: 'EXCELLENT' });
 
-      const res = await request(app.getHttpServer())
+      const res = (await request(app.getHttpServer())
         .get(`/api/v1/ruches/${rucheId}/inspections`)
         .set('Authorization', `Bearer ${accessToken}`)
-        .expect(200);
+        .expect(200)) as request.Response;
 
       expect(res.body.data).toBeInstanceOf(Array);
       expect(res.body.meta).toBeDefined();
@@ -130,17 +130,17 @@ describe('Inspection (e2e)', () => {
 
   describe('GET /api/v1/inspections/:id', () => {
     it('should get an inspection by id', async () => {
-      const createRes = await request(app.getHttpServer())
+      const createRes = (await request(app.getHttpServer())
         .post(`/api/v1/ruches/${rucheId}/inspections`)
         .set('Authorization', `Bearer ${accessToken}`)
-        .send({ date: '2025-08-01', etatGeneral: 'MOYEN' });
+        .send({ date: '2025-08-01', etatGeneral: 'MOYEN' })) as request.Response;
 
       const id = createRes.body.data.id;
 
-      const res = await request(app.getHttpServer())
+      const res = (await request(app.getHttpServer())
         .get(`/api/v1/inspections/${id}`)
         .set('Authorization', `Bearer ${accessToken}`)
-        .expect(200);
+        .expect(200)) as request.Response;
 
       expect(res.body.data.etatGeneral).toBe('MOYEN');
     });
@@ -148,18 +148,18 @@ describe('Inspection (e2e)', () => {
 
   describe('PUT /api/v1/inspections/:id', () => {
     it('should update an inspection', async () => {
-      const createRes = await request(app.getHttpServer())
+      const createRes = (await request(app.getHttpServer())
         .post(`/api/v1/ruches/${rucheId}/inspections`)
         .set('Authorization', `Bearer ${accessToken}`)
-        .send({ date: '2025-09-01', etatGeneral: 'FAIBLE' });
+        .send({ date: '2025-09-01', etatGeneral: 'FAIBLE' })) as request.Response;
 
       const id = createRes.body.data.id;
 
-      const res = await request(app.getHttpServer())
+      const res = (await request(app.getHttpServer())
         .put(`/api/v1/inspections/${id}`)
         .set('Authorization', `Bearer ${accessToken}`)
         .send({ etatGeneral: 'BON', notes: 'Amélioration constatée' })
-        .expect(200);
+        .expect(200)) as request.Response;
 
       expect(res.body.data.etatGeneral).toBe('BON');
     });
@@ -167,10 +167,10 @@ describe('Inspection (e2e)', () => {
 
   describe('DELETE /api/v1/inspections/:id', () => {
     it('should delete an inspection', async () => {
-      const createRes = await request(app.getHttpServer())
+      const createRes = (await request(app.getHttpServer())
         .post(`/api/v1/ruches/${rucheId}/inspections`)
         .set('Authorization', `Bearer ${accessToken}`)
-        .send({ date: '2025-10-01', etatGeneral: 'CRITIQUE' });
+        .send({ date: '2025-10-01', etatGeneral: 'CRITIQUE' })) as request.Response;
 
       const id = createRes.body.data.id;
 

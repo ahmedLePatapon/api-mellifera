@@ -65,9 +65,12 @@ describe('Rucher (e2e)', () => {
     await app.init();
 
     // Register and get access token
-    const res = await request(app.getHttpServer())
-      .post('/api/v1/auth/register')
-      .send({ email: 'rucher@test.com', password: 'Password123!', nom: 'Test', prenom: 'User' });
+    const res = (await request(app.getHttpServer()).post('/api/v1/auth/register').send({
+      email: 'rucher@test.com',
+      password: 'Password123!',
+      nom: 'Test',
+      prenom: 'User',
+    })) as request.Response;
     accessToken = res.body.data.tokens.accessToken;
   });
 

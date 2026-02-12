@@ -63,9 +63,12 @@ describe('Ruche (e2e)', () => {
     await app.init();
 
     // Register and get token
-    const authRes = await request(app.getHttpServer())
-      .post('/api/v1/auth/register')
-      .send({ email: 'ruche@test.com', password: 'Password123!', nom: 'Test', prenom: 'User' });
+    const authRes = (await request(app.getHttpServer()).post('/api/v1/auth/register').send({
+      email: 'ruche@test.com',
+      password: 'Password123!',
+      nom: 'Test',
+      prenom: 'User',
+    })) as request.Response;
     accessToken = authRes.body.data.tokens.accessToken;
 
     // Create a rucher
@@ -82,11 +85,11 @@ describe('Ruche (e2e)', () => {
 
   describe('POST /api/v1/ruchers/:rucherId/ruches', () => {
     it('should create a ruche', async () => {
-      const res = await request(app.getHttpServer())
+      const res = (await request(app.getHttpServer())
         .post(`/api/v1/ruchers/${rucherId}/ruches`)
         .set('Authorization', `Bearer ${accessToken}`)
         .send({ nom: 'Ruche Alpha', type: 'DADANT', statut: 'ACTIVE' })
-        .expect(201);
+        .expect(201)) as request.Response;
 
       expect(res.body.data.nom).toBe('Ruche Alpha');
       expect(res.body.data.type).toBe('DADANT');
@@ -109,10 +112,10 @@ describe('Ruche (e2e)', () => {
         .set('Authorization', `Bearer ${accessToken}`)
         .send({ nom: 'Ruche Liste' });
 
-      const res = await request(app.getHttpServer())
+      const res = (await request(app.getHttpServer())
         .get(`/api/v1/ruchers/${rucherId}/ruches`)
         .set('Authorization', `Bearer ${accessToken}`)
-        .expect(200);
+        .expect(200)) as request.Response;
 
       expect(res.body.data).toBeInstanceOf(Array);
       expect(res.body.meta).toBeDefined();
@@ -122,17 +125,17 @@ describe('Ruche (e2e)', () => {
 
   describe('GET /api/v1/ruches/:id', () => {
     it('should get a ruche by id', async () => {
-      const createRes = await request(app.getHttpServer())
+      const createRes = (await request(app.getHttpServer())
         .post(`/api/v1/ruchers/${rucherId}/ruches`)
         .set('Authorization', `Bearer ${accessToken}`)
-        .send({ nom: 'Ruche Detail' });
+        .send({ nom: 'Ruche Detail' })) as request.Response;
 
       const id = createRes.body.data.id;
 
-      const res = await request(app.getHttpServer())
+      const res = (await request(app.getHttpServer())
         .get(`/api/v1/ruches/${id}`)
         .set('Authorization', `Bearer ${accessToken}`)
-        .expect(200);
+        .expect(200)) as request.Response;
 
       expect(res.body.data.nom).toBe('Ruche Detail');
     });
@@ -140,18 +143,18 @@ describe('Ruche (e2e)', () => {
 
   describe('PUT /api/v1/ruches/:id', () => {
     it('should update a ruche', async () => {
-      const createRes = await request(app.getHttpServer())
+      const createRes = (await request(app.getHttpServer())
         .post(`/api/v1/ruchers/${rucherId}/ruches`)
         .set('Authorization', `Bearer ${accessToken}`)
-        .send({ nom: 'Ancien' });
+        .send({ nom: 'Ancien' })) as request.Response;
 
       const id = createRes.body.data.id;
 
-      const res = await request(app.getHttpServer())
+      const res = (await request(app.getHttpServer())
         .put(`/api/v1/ruches/${id}`)
         .set('Authorization', `Bearer ${accessToken}`)
         .send({ nom: 'Nouveau', statut: 'INACTIVE' })
-        .expect(200);
+        .expect(200)) as request.Response;
 
       expect(res.body.data.nom).toBe('Nouveau');
     });
