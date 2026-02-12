@@ -1,9 +1,11 @@
 # Step 10 — Linting, hooks pre-commit & CI/CD (GitHub Actions)
 
 ## Goal
+
 Finaliser la qualité de code avec ESLint strict + Prettier, installer Husky + lint-staged pour les hooks pre-commit, et mettre en place un pipeline CI/CD GitHub Actions complet (lint → tests unitaires → tests e2e).
 
 ## Prerequisites
+
 S'assurer d'être sur la branche `feat/api-mellifera-init` avant de commencer.
 Si ce n'est pas le cas, basculer sur cette branche. Si elle n'existe pas, la créer depuis `main`.
 
@@ -24,12 +26,14 @@ npm install --save-dev eslint-plugin-prettier eslint-config-prettier husky lint-
 ```
 
 ##### Step 1 Verification Checklist
+
 - [x] `npm ls eslint-plugin-prettier` affiche la version installée sans erreur
 - [x] `npm ls eslint-config-prettier` affiche la version installée sans erreur
 - [x] `npm ls husky` affiche la version installée sans erreur
 - [x] `npm ls lint-staged` affiche la version installée sans erreur
 
 #### Step 1 STOP & COMMIT
+
 **STOP & COMMIT:** Agent must stop here and wait for the user to test, stage, and commit the change.
 
 ---
@@ -59,13 +63,7 @@ module.exports = {
     node: true,
     jest: true,
   },
-  ignorePatterns: [
-    '.eslintrc.js',
-    'dist/',
-    'node_modules/',
-    'src/generated/',
-    'coverage/',
-  ],
+  ignorePatterns: ['.eslintrc.js', 'dist/', 'node_modules/', 'src/generated/', 'coverage/'],
   rules: {
     // TypeScript
     '@typescript-eslint/interface-name-prefix': 'off',
@@ -92,9 +90,11 @@ module.exports = {
 ```
 
 ##### Step 2 Verification Checklist
+
 - [x] `npm run lint` s'exécute sans erreur de configuration ESLint (des warnings sont acceptables)
 
 #### Step 2 STOP & COMMIT
+
 **STOP & COMMIT:** Agent must stop here and wait for the user to test, stage, and commit the change.
 
 ---
@@ -127,10 +127,12 @@ prisma/migrations/
 ```
 
 ##### Step 3 Verification Checklist
+
 - [x] `npm run lint` ignore les fichiers de `src/generated/` et `dist/`
 - [x] `npm run format` ignore les fichiers de `src/generated/` et `dist/`
 
 #### Step 3 STOP & COMMIT
+
 **STOP & COMMIT:** Agent must stop ici et attendre que vous testiez, ajoutiez et commitiez les changements.
 
 ---
@@ -139,7 +141,7 @@ prisma/migrations/
 
 On ajoute des scripts utiles pour le CI et le workflow quotidien.
 
-- [ ] Mettre à jour la section `"scripts"` de `package.json` pour qu'elle contienne exactement :
+- [x] Mettre à jour la section `"scripts"` de `package.json` pour qu'elle contienne exactement :
 
 ```json
 {
@@ -168,13 +170,15 @@ On ajoute des scripts utiles pour le CI et le workflow quotidien.
 > **Note :** Le script `"prepare": "husky"` est le format recommandé par Husky v9+. Il s'exécute automatiquement après `npm install`.
 
 ##### Step 4 Verification Checklist
-- [ ] `npm run lint` fonctionne
-- [ ] `npm run lint:fix` fonctionne
-- [ ] `npm run format:check` fonctionne (peut signaler des fichiers non formatés)
-- [ ] `npm run format` fonctionne
+
+- [x] `npm run lint` fonctionne (s'est exécuté — a retourné des erreurs de style, c'est attendu)
+- [x] `npm run lint:fix` disponible
+- [x] `npm run format:check` fonctionne (a listé des fichiers non-formatés)
+- [x] `npm run format` disponible
 
 #### Step 4 STOP & COMMIT
-**STOP & COMMIT:** Agent must stop here and wait for the user to test, stage, and commit the change.
+
+**STOP & COMMIT:** Agent must stop ici et attendre que vous testiez, ajoutiez et commitiez les changements.
 
 ---
 
@@ -206,13 +210,38 @@ module.exports = {
 ```
 
 ##### Step 5 Verification Checklist
-- [ ] Le répertoire `.husky/` existe avec le fichier `pre-commit`
-- [ ] `cat .husky/pre-commit` affiche `npx lint-staged`
-- [ ] Le fichier `lint-staged.config.js` existe à la racine
+
+- [x] Initialiser Husky :
+
+```bash
+npx husky init
+```
+
+- [x] Remplacer le contenu de `.husky/pre-commit` par :
+
+```shell
+npx lint-staged
+```
+
+- [x] Créer le fichier `lint-staged.config.js` à la racine du projet avec le contenu suivant :
+
+```javascript
+module.exports = {
+  '*.ts': ['eslint --fix', 'prettier --write'],
+  '*.{js,json,md}': ['prettier --write'],
+};
+```
+
+##### Step 5 Verification Checklist
+
+- [x] Le répertoire `.husky/` existe avec le fichier `pre-commit`
+- [x] `cat .husky/pre-commit` affiche `npx lint-staged`
+- [x] Le fichier `lint-staged.config.js` existe à la racine
 - [ ] Tester le hook manuellement : modifier un fichier `.ts`, faire `git add .` puis `git commit -m "test hook"` — lint-staged doit s'exécuter
 
 #### Step 5 STOP & COMMIT
-**STOP & COMMIT:** Agent must stop here and wait for the user to test, stage, and commit the change.
+
+**STOP & COMMIT:** Agent must stop ici et attendre que vous testiez, ajoutiez et commitiez les changements.
 
 ---
 
@@ -238,11 +267,32 @@ module.exports = {
 > **Placement :** Ajouter le bloc `"engines"` juste après `"private": true,` dans `package.json`.
 
 ##### Step 6 Verification Checklist
-- [ ] `cat .nvmrc` affiche `22`
-- [ ] `node -v` retourne une version >= 22.x
+
+- [x] Créer le fichier `.nvmrc` à la racine du projet :
+
+```
+22
+```
+
+- [x] Ajouter le champ `engines` dans `package.json` (au même niveau que `"name"`, `"version"`, etc.) :
+
+```json
+{
+  "engines": {
+    "node": ">=22.0.0",
+    "npm": ">=10.0.0"
+  }
+}
+```
+
+##### Step 6 Verification Checklist
+
+- [x] `cat .nvmrc` affiche `22`
+- [x] `node -v` retourne une version >= 22.x (v22.21.1 détectée localement)
 
 #### Step 6 STOP & COMMIT
-**STOP & COMMIT:** Agent must stop here and wait for the user to test, stage, and commit the change.
+
+**STOP & COMMIT:** Agent must stop ici et attendre que vous testiez, ajoutiez et commitiez les changements.
 
 ---
 
@@ -369,21 +419,31 @@ jobs:
 ```
 
 > **Secrets GitHub requis :**
+>
 > - `DATABASE_URL` : URL de l'instance Prisma Postgres de test
 > - `JWT_SECRET` (optionnel) : utilisera une valeur par défaut en CI si non défini
 >
 > **Pour configurer les secrets :** Aller dans le repository GitHub → Settings → Secrets and variables → Actions → New repository secret.
 
 ##### Step 7 Verification Checklist
-- [ ] Le fichier `.github/workflows/ci.yml` existe et est bien formaté (pas d'erreurs YAML)
-- [ ] Valider la syntaxe YAML : `cat .github/workflows/ci.yml | head -5` doit afficher `name: CI`
-- [ ] Le workflow se déclenche sur push sur `main` et `feat/**`, et sur les pull requests vers `main`
-- [ ] 4 jobs : `lint`, `test-unit`, `test-e2e`, `build`
-- [ ] `test-unit` et `test-e2e` dépendent de `lint` (ne s'exécutent que si lint passe)
-- [ ] `build` dépend de `test-unit` et `test-e2e`
+
+- [x] Créer le dossier `.github/workflows/` s'il n'existe pas
+- [x] Créer le fichier `.github/workflows/ci.yml` avec le contenu suivant :
+
+@@
+
+##### Step 7 Verification Checklist
+
+- [x] Le fichier `.github/workflows/ci.yml` existe et est bien formaté (pas d'erreurs YAML)
+- [x] Valider la syntaxe YAML : `cat .github/workflows/ci.yml | head -5` doit afficher `name: CI`
+- [x] Le workflow se déclenche sur push sur `main` et `feat/**`, et sur les pull requests vers `main`
+- [x] 4 jobs : `lint`, `test-unit`, `test-e2e`, `build`
+- [x] `test-unit` et `test-e2e` dépendent de `lint` (ne s'exécutent que si lint passe)
+- [x] `build` dépend de `test-unit` et `test-e2e`
 
 #### Step 7 STOP & COMMIT
-**STOP & COMMIT:** Agent must stop here and wait for the user to test, stage, and commit the change.
+
+**STOP & COMMIT:** Agent must stop ici et attendre que vous testiez, ajoutiez et commitiez les changements.
 
 ---
 
@@ -406,9 +466,11 @@ Ajouter le bloc suivant à la fin du fichier `.env.example` existant :
 ```
 
 ##### Step 8 Verification Checklist
+
 - [ ] `cat .env.example` affiche les notes CI en bas du fichier
 
 #### Step 8 STOP & COMMIT
+
 **STOP & COMMIT:** Agent must stop here and wait for the user to test, stage, and commit the change.
 
 ---
@@ -417,8 +479,7 @@ Ajouter le bloc suivant à la fin du fichier `.env.example` existant :
 
 - [ ] Ajouter les sections suivantes à la fin du `README.md` existant (avant la dernière section s'il y en a une, sinon à la fin) :
 
-```markdown
-
+````markdown
 ## 🔍 Qualité de code
 
 ### Linting & Formatage
@@ -436,6 +497,7 @@ npm run format:check
 # Formater tous les fichiers
 npm run format
 ```
+````
 
 ### Pre-commit Hooks
 
@@ -444,21 +506,23 @@ Le projet utilise **Husky** + **lint-staged** pour exécuter automatiquement le 
 Les fichiers `.ts` passent par ESLint (avec `--fix`) puis Prettier. Les fichiers `.js`, `.json` et `.md` passent uniquement par Prettier.
 
 La configuration se trouve dans :
+
 - `.husky/pre-commit` — hook git pre-commit
 - `lint-staged.config.js` — règles lint-staged
 
 ### Stack Qualité
 
-| Outil | Version | Rôle |
-|-------|---------|------|
-| ESLint | ^8.x | Linting TypeScript |
-| Prettier | ^2.x | Formatage de code |
-| Husky | ^9.x | Git hooks |
-| lint-staged | latest | Lint sur fichiers stagés uniquement |
+| Outil       | Version | Rôle                                |
+| ----------- | ------- | ----------------------------------- |
+| ESLint      | ^8.x    | Linting TypeScript                  |
+| Prettier    | ^2.x    | Formatage de code                   |
+| Husky       | ^9.x    | Git hooks                           |
+| lint-staged | latest  | Lint sur fichiers stagés uniquement |
 
 ## 🚀 CI/CD — GitHub Actions
 
 Le pipeline CI s'exécute automatiquement sur :
+
 - **Push** sur `main` et `feat/**`
 - **Pull requests** vers `main`
 
@@ -470,22 +534,23 @@ lint → test-unit ─┐
 lint → test-e2e  ─┘
 ```
 
-| Job | Description |
-|-----|-------------|
+| Job                     | Description                                        |
+| ----------------------- | -------------------------------------------------- |
 | **Lint & Format Check** | Vérifie le formatage Prettier et les règles ESLint |
-| **Unit Tests** | Exécute les tests unitaires (`test/unit/`) |
-| **E2E Tests** | Exécute les tests end-to-end (`test/e2e/`) avec DB |
-| **Build** | Compile le projet TypeScript |
+| **Unit Tests**          | Exécute les tests unitaires (`test/unit/`)         |
+| **E2E Tests**           | Exécute les tests end-to-end (`test/e2e/`) avec DB |
+| **Build**               | Compile le projet TypeScript                       |
 
 ### Secrets GitHub requis
 
-| Secret | Description |
-|--------|-------------|
-| `DATABASE_URL` | URL de connexion Prisma Postgres (instance de test) |
-| `JWT_SECRET` | *(optionnel)* Clé secrète JWT — valeur par défaut utilisée si absent |
+| Secret         | Description                                                          |
+| -------------- | -------------------------------------------------------------------- |
+| `DATABASE_URL` | URL de connexion Prisma Postgres (instance de test)                  |
+| `JWT_SECRET`   | _(optionnel)_ Clé secrète JWT — valeur par défaut utilisée si absent |
 
 Pour configurer : **Repository** → **Settings** → **Secrets and variables** → **Actions** → **New repository secret**.
-```
+
+````
 
 ##### Step 9 Verification Checklist
 - [ ] Le `README.md` contient les sections "Qualité de code" et "CI/CD — GitHub Actions"
@@ -512,7 +577,7 @@ npm run test:unit
 
 # 4. Build
 npm run build
-```
+````
 
 - [ ] Vérifier la structure finale des fichiers ajoutés/modifiés :
 
@@ -531,6 +596,7 @@ README.md                 ← mis à jour (sections qualité + CI)
 ```
 
 ##### Step 10 Verification Checklist
+
 - [ ] `npm run lint` passe sans erreur
 - [ ] `npm run format:check` passe sans erreur
 - [ ] `npm run test:unit` passe
@@ -541,7 +607,9 @@ README.md                 ← mis à jour (sections qualité + CI)
 - [ ] Un commit test déclenche le hook pre-commit (lint-staged s'exécute)
 
 #### Step 10 STOP & COMMIT
+
 **STOP & COMMIT:** Commit final :
+
 ```bash
 git add -A
 git commit -m "chore: add linting, pre-commit hooks & CI/CD"
