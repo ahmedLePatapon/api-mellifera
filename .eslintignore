@@ -1,0 +1,6 @@
+dist/
+node_modules/
+src/generated/
+coverage/
+*.js
+!.eslintrc.js

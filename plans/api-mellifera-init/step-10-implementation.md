@@ -103,7 +103,7 @@ module.exports = {
 
 Pour s'assurer que les fichiers générés, les dossiers build et les dépendances sont exclus du linting et du formatage.
 
-- [ ] Créer le fichier `.eslintignore` avec le contenu suivant :
+- [x] Créer le fichier `.eslintignore` avec le contenu suivant :
 
 ```
 dist/
@@ -114,7 +114,7 @@ coverage/
 !.eslintrc.js
 ```
 
-- [ ] Créer le fichier `.prettierignore` avec le contenu suivant :
+- [x] Créer le fichier `.prettierignore` avec le contenu suivant :
 
 ```
 dist/
@@ -127,11 +127,11 @@ prisma/migrations/
 ```
 
 ##### Step 3 Verification Checklist
-- [ ] `npm run lint` ignore les fichiers de `src/generated/` et `dist/`
-- [ ] `npm run format` ignore les fichiers de `src/generated/` et `dist/`
+- [x] `npm run lint` ignore les fichiers de `src/generated/` et `dist/`
+- [x] `npm run format` ignore les fichiers de `src/generated/` et `dist/`
 
 #### Step 3 STOP & COMMIT
-**STOP & COMMIT:** Agent must stop here and wait for the user to test, stage, and commit the change.
+**STOP & COMMIT:** Agent must stop ici et attendre que vous testiez, ajoutiez et commitiez les changements.
 
 ---
 
