@@ -1,14 +1,17 @@
 ## API Mellifera — Step 3 : Couche Domaine (implémentation)
 
 ## Goal
+
 Fournir la mise en place complète de la couche domaine (entités, value objects, interfaces de repository, types partagés) en TypeScript pur, prête à être copiée dans `src/domain`.
 
 ## Prerequisites
+
 - Assurez-vous d'être sur la branche `feat/api-mellifera-init`.
 
 ### Step-by-Step Instructions
 
 #### Step 1: Ajouter les types partagés et constantes
+
 - [ ] Créer `src/shared/types.ts`.
 
 ```typescript
@@ -34,7 +37,6 @@ export interface SortParams {
 }
 
 export type UUID = string;
-
 ```
 
 - [ ] Créer `src/shared/constants.ts`.
@@ -50,13 +52,14 @@ export const ROLES = {
   USER: 'USER',
   ADMIN: 'ADMIN',
 } as const;
-
 ```
 
 ##### Step 1 Verification Checklist
+
 - [ ] Les fichiers `src/shared/types.ts` et `src/shared/constants.ts` existent et exportent les symboles.
 
 #### Step 2: Value Object — Email
+
 - [ ] Créer `src/domain/user/value-objects/email.vo.ts`.
 
 ```typescript
@@ -92,14 +95,15 @@ export class Email {
     return other && this._value === other._value;
   }
 }
-
 ```
 
 ##### Step 2 Verification Checklist
+
 - [ ] Instanciation valide: `new Email('user@example.com')` fonctionne.
 - [ ] Instanciation invalide: `new Email('not-an-email')` lance une erreur.
 
 #### Step 3: Value Object — CoordonneesGps
+
 - [ ] Créer `src/domain/rucher/value-objects/coordonnees-gps.vo.ts`.
 
 ```typescript
@@ -132,19 +136,18 @@ export class CoordonneesGps {
   }
 
   equals(other: CoordonneesGps): boolean {
-    return (
-      other && this._latitude === other._latitude && this._longitude === other._longitude
-    );
+    return other && this._latitude === other._latitude && this._longitude === other._longitude;
   }
 }
-
 ```
 
 ##### Step 3 Verification Checklist
+
 - [ ] Instanciation valide: `new CoordonneesGps(48.8566, 2.3522)` fonctionne.
 - [ ] Instanciation invalide: latitude hors bornes lance une erreur.
 
 #### Step 4: Entité `User`
+
 - [ ] Créer `src/domain/user/entities/user.entity.ts`.
 
 ```typescript
@@ -188,13 +191,14 @@ export class User {
     this.updatedAt = new Date();
   }
 }
-
 ```
 
 ##### Step 4 Verification Checklist
+
 - [ ] Créer une instance `new User({ id: 'u1', email: new Email('a@b.com') })`.
 
 #### Step 5: Entité `Rucher`
+
 - [ ] Créer `src/domain/rucher/entities/rucher.entity.ts`.
 
 ```typescript
@@ -245,13 +249,14 @@ export class Rucher {
     this.updatedAt = new Date();
   }
 }
-
 ```
 
 ##### Step 5 Verification Checklist
+
 - [ ] Instance `new Rucher({ id: 'r1', ownerId: 'u1', name: 'Mon Rucher' })`.
 
 #### Step 6: Entité `Ruche`
+
 - [ ] Créer `src/domain/ruche/entities/ruche.entity.ts`.
 
 ```typescript
@@ -296,13 +301,14 @@ export class Ruche {
     this.updatedAt = new Date();
   }
 }
-
 ```
 
 ##### Step 6 Verification Checklist
+
 - [ ] Instance `new Ruche({ id: 'h1', rucherId: 'r1' })` fonctionne.
 
 #### Step 7: Entité `Inspection`
+
 - [ ] Créer `src/domain/inspection/entities/inspection.entity.ts`.
 
 ```typescript
@@ -347,13 +353,14 @@ export class Inspection {
     this.updatedAt = new Date();
   }
 }
-
 ```
 
 ##### Step 7 Verification Checklist
+
 - [ ] Instance `new Inspection({ id: 'i1', rucheId: 'h1', date: new Date() })` fonctionne.
 
 #### Step 8: Repository Interfaces (abstract classes)
+
 - [ ] Créer `src/domain/user/repositories/user.repository.interface.ts`.
 
 ```typescript
@@ -369,7 +376,6 @@ export abstract class UserRepository {
   abstract delete(id: string): Promise<void>;
   abstract findAll(pagination?: PaginationParams): Promise<PaginatedResult<User>>;
 }
-
 ```
 
 - [ ] Créer `src/domain/rucher/repositories/rucher.repository.interface.ts`.
@@ -384,9 +390,11 @@ export abstract class RucherRepository {
   abstract findById(id: string): Promise<Rucher | null>;
   abstract update(rucher: Rucher): Promise<Rucher>;
   abstract delete(id: string): Promise<void>;
-  abstract findAllByOwner(ownerId: string, pagination?: PaginationParams): Promise<PaginatedResult<Rucher>>;
+  abstract findAllByOwner(
+    ownerId: string,
+    pagination?: PaginationParams,
+  ): Promise<PaginatedResult<Rucher>>;
 }
-
 ```
 
 - [ ] Créer `src/domain/ruche/repositories/ruche.repository.interface.ts`.
@@ -401,9 +409,11 @@ export abstract class RucheRepository {
   abstract findById(id: string): Promise<Ruche | null>;
   abstract update(ruche: Ruche): Promise<Ruche>;
   abstract delete(id: string): Promise<void>;
-  abstract findAllByRucher(rucherId: string, pagination?: PaginationParams): Promise<PaginatedResult<Ruche>>;
+  abstract findAllByRucher(
+    rucherId: string,
+    pagination?: PaginationParams,
+  ): Promise<PaginatedResult<Ruche>>;
 }
-
 ```
 
 - [ ] Créer `src/domain/inspection/repositories/inspection.repository.interface.ts`.
@@ -418,15 +428,20 @@ export abstract class InspectionRepository {
   abstract findById(id: string): Promise<Inspection | null>;
   abstract update(inspection: Inspection): Promise<Inspection>;
   abstract delete(id: string): Promise<void>;
-  abstract findAllByRuche(rucheId: string, pagination?: PaginationParams, filters?: Record<string, unknown>): Promise<PaginatedResult<Inspection>>;
+  abstract findAllByRuche(
+    rucheId: string,
+    pagination?: PaginationParams,
+    filters?: Record<string, unknown>,
+  ): Promise<PaginatedResult<Inspection>>;
 }
-
 ```
 
 ##### Step 8 Verification Checklist
+
 - [ ] Chaque fichier d'interface est présent et exporte une `abstract class`.
 
 #### Step 9: Export barrels (optionnel mais recommandé)
+
 - [ ] Ajouter des fichiers `index.ts` pour ré-exporter les éléments si vous le souhaitez. Exemple minimal à copier dans chaque dossier :
 
 ```typescript
@@ -451,13 +466,14 @@ export * from './repositories/inspection.repository.interface';
 // src/shared/index.ts
 export * from '../shared/types';
 export * from '../shared/constants';
-
 ```
 
 ##### Step 9 Verification Checklist
+
 - [ ] Les `index.ts` (barrels) exposent les symboles pour `@domain/*` usage.
 
 #### Step 10: STOP & COMMIT
+
 **STOP & COMMIT:** Arrêtez ici, copiez les fichiers dans le projet (`src/...`) et effectuez un commit. Après vérification locale (compilation TypeScript), revenez pour la suite (repositories infra / handlers).
 
 ---
@@ -488,14 +504,18 @@ git push --set-upstream origin feat/api-mellifera-init
 ```
 
 ## Remarques finales
+
 - Le code de la couche domaine est volontairement indépendant de Nest et de Prisma (aucune importation). L'adaptation entre la couche infrastructure (Prisma) et la couche domaine doit se faire via des mappers dans `src/infrastructure/repositories/*`.
 - Si vous souhaitez, je peux ensuite générer les adapters Prisma pour ces interfaces (Step 5).
+
 # API Mellifera — Step 1 : Initialisation du projet NestJS & configuration de base
 
 ## Goal
+
 Initialiser le projet NestJS avec TypeScript strict, installer toutes les dépendances nécessaires, configurer les fichiers de base (`.gitignore`, `.env.example`, ESLint, Prettier), et vérifier que le serveur démarre correctement.
 
 ## Prerequisites
+
 L'utilisateur doit être sur la branche `feat/api-mellifera-init` avant de commencer.
 Si la branche n'existe pas, la créer depuis `main`.
 
@@ -521,6 +541,7 @@ npx @nestjs/cli@11.0.16 new . --package-manager npm --skip-git --strict
 > **Note :** `--skip-git` car le repo Git existe déjà. `--strict` active le mode TypeScript strict. Le `.` indique d'installer dans le dossier courant.
 
 ##### Step 1.1 Verification Checklist
+
 - [x] La branche `feat/api-mellifera-init` est active (`git branch --show-current`)
 - [x] Les fichiers `package.json`, `tsconfig.json`, `nest-cli.json`, `src/main.ts`, `src/app.module.ts` existent
 - [x] `node_modules/` est présent
@@ -530,19 +551,20 @@ npx @nestjs/cli@11.0.16 new . --package-manager npm --skip-git --strict
 
 #### Step 1.2 : Installer toutes les dépendances du projet
 
- - [x] Installer les dépendances de production :
+- [x] Installer les dépendances de production :
 
 ```bash
 npm install @nestjs/config@^4.0.3 @nestjs/swagger@^11.2.6 @nestjs/passport@^11.0.5 @nestjs/jwt@^11.0.2 @nestjs/cqrs@^11.0.3 @prisma/client@^7.3.0 passport@^0.7.0 passport-jwt@^4.0.1 bcrypt@^6.0.0 class-validator@^0.14.3 class-transformer@^0.5.1 joi@^18.0.2
 ```
 
- - [x] Installer les dépendances de développement :
+- [x] Installer les dépendances de développement :
 
 ```bash
 npm install --save-dev prisma@^7.3.0 @types/passport-jwt@^4.0.1 @types/bcrypt@^6.0.0 @types/supertest@^6.0.3
 ```
 
 ##### Step 1.2 Verification Checklist
+
 - [x] `npm ls @nestjs/config` affiche la version installée
 - [x] `npm ls @prisma/client` affiche la version installée
 - [x] `npm ls bcrypt` affiche la version installée
@@ -609,6 +631,7 @@ prisma/migrations/**/migration_lock.toml
 ```
 
 ##### Step 1.3 Verification Checklist
+
 - [x] Le fichier `.gitignore` existe et contient les entrées pour `.env`, `node_modules`, `dist`, `prisma`
 
 ---
@@ -638,6 +661,7 @@ JWT_REFRESH_EXPIRATION="7d"
 ```
 
 ##### Step 1.4 Verification Checklist
+
 - [x] Le fichier `.env.example` existe à la racine
 - [x] Il contient les 5 variables : `PORT`, `DATABASE_URL`, `JWT_SECRET`, `JWT_ACCESS_EXPIRATION`, `JWT_REFRESH_EXPIRATION`
 
@@ -680,6 +704,7 @@ module.exports = {
 ```
 
 ##### Step 1.5 Verification Checklist
+
 - [x] Le fichier `.eslintrc.js` existe
 - [x] Les règles TypeScript strictes sont présentes
 
@@ -703,6 +728,7 @@ module.exports = {
 ```
 
 ##### Step 1.6 Verification Checklist
+
 - [x] Le fichier `.prettierrc` existe avec les bonnes options
 
 ---
@@ -751,16 +777,12 @@ module.exports = {
 ```json
 {
   "extends": "./tsconfig.json",
-  "exclude": [
-    "node_modules",
-    "test",
-    "dist",
-    "**/*spec.ts"
-  ]
+  "exclude": ["node_modules", "test", "dist", "**/*spec.ts"]
 }
 ```
 
 ##### Step 1.7 Verification Checklist
+
 - [x] `tsconfig.json` contient `"strict": true` et les `paths` pour l'architecture Clean
 - [x] `tsconfig.build.json` existe et étend `tsconfig.json`
 - [x] `npm run build` compile sans erreur
@@ -792,6 +814,7 @@ module.exports = {
 ```
 
 ##### Step 1.8 Verification Checklist
+
 - [ ] `nest-cli.json` contient le plugin Swagger
 
 ---
@@ -867,6 +890,7 @@ void bootstrap();
 ```
 
 ##### Step 1.9 Verification Checklist
+
 - [ ] `src/main.ts` contient la configuration Swagger, le `ValidationPipe`, le prefix `api/v1`, et CORS
 
 ---
@@ -893,6 +917,7 @@ export class AppModule {}
 ```
 
 ##### Step 1.10 Verification Checklist
+
 - [ ] `src/app.module.ts` importe `ConfigModule.forRoot()` en global
 - [ ] Le fichier ne contient plus `AppController` ni `AppService`
 
@@ -907,6 +932,7 @@ rm -f src/app.controller.ts src/app.controller.spec.ts src/app.service.ts
 ```
 
 ##### Step 1.11 Verification Checklist
+
 - [ ] `src/app.controller.ts`, `src/app.controller.spec.ts`, `src/app.service.ts` n'existent plus
 
 ---
@@ -930,6 +956,7 @@ npm run start:dev
 - [ ] Arrêter le serveur (`Ctrl+C`)
 
 ##### Step 1.12 Verification Checklist
+
 - [ ] `npm run build` — aucune erreur de compilation
 - [ ] `npm run start:dev` — le serveur démarre et log :
   - `🐝 API Mellifera is running on: http://localhost:3000`
@@ -952,26 +979,28 @@ git commit -m "chore: init NestJS project with dependencies"
 
 ## Résumé des fichiers créés/modifiés
 
-| Fichier | Action |
-|---------|--------|
-| `package.json` | Généré par `nest new` + dépendances ajoutées |
-| `tsconfig.json` | Modifié — mode strict + paths Clean Architecture |
-| `tsconfig.build.json` | Modifié — exclude test/dist |
-| `nest-cli.json` | Modifié — plugin Swagger |
-| `.gitignore` | Remplacé — complet pour NestJS + Prisma |
-| `.env.example` | Créé — variables DB, JWT, PORT |
-| `.eslintrc.js` | Modifié — règles TypeScript strictes |
-| `.prettierrc` | Modifié — options formatage |
-| `src/main.ts` | Modifié — Swagger, ValidationPipe, CORS, prefix |
-| `src/app.module.ts` | Modifié — ConfigModule global |
-| `src/app.controller.ts` | Supprimé |
-| `src/app.controller.spec.ts` | Supprimé |
-| `src/app.service.ts` | Supprimé |
+| Fichier                      | Action                                           |
+| ---------------------------- | ------------------------------------------------ |
+| `package.json`               | Généré par `nest new` + dépendances ajoutées     |
+| `tsconfig.json`              | Modifié — mode strict + paths Clean Architecture |
+| `tsconfig.build.json`        | Modifié — exclude test/dist                      |
+| `nest-cli.json`              | Modifié — plugin Swagger                         |
+| `.gitignore`                 | Remplacé — complet pour NestJS + Prisma          |
+| `.env.example`               | Créé — variables DB, JWT, PORT                   |
+| `.eslintrc.js`               | Modifié — règles TypeScript strictes             |
+| `.prettierrc`                | Modifié — options formatage                      |
+| `src/main.ts`                | Modifié — Swagger, ValidationPipe, CORS, prefix  |
+| `src/app.module.ts`          | Modifié — ConfigModule global                    |
+| `src/app.controller.ts`      | Supprimé                                         |
+| `src/app.controller.spec.ts` | Supprimé                                         |
+| `src/app.service.ts`         | Supprimé                                         |
 
 ## Dépendances installées
 
 ### Production
+
 `@nestjs/config`, `@nestjs/swagger`, `@nestjs/passport`, `@nestjs/jwt`, `@nestjs/cqrs`, `@prisma/client`, `passport`, `passport-jwt`, `bcrypt`, `class-validator`, `class-transformer`, `joi`
 
 ### Développement
+
 `prisma`, `@types/passport-jwt`, `@types/bcrypt`, `@types/supertest`

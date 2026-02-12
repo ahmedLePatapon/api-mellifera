@@ -15,7 +15,7 @@
     "format": "prettier --write \"**/*.{ts,js,json,md}\"",
     "format:check": "prettier --check \"**/*.{ts,js,json,md}\"",
     "test": "jest",
-    "test:unit": "jest --testPathPattern=test/unit",
+    "test:unit": "jest --testPathPatterns=test/unit",
     "test:integration": "jest --testPathPattern=test/integration",
     "test:e2e": "jest --testPathPattern=test/e2e --forceExit --detectOpenHandles",
     "test:cov": "jest --coverage",
@@ -23,7 +23,7 @@
     "prisma:migrate": "prisma migrate dev",
     "prisma:migrate:deploy": "prisma migrate deploy",
     "prisma:studio": "prisma studio",
-    "prepare": "husky"
+    "prepare": "husky install"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.0",

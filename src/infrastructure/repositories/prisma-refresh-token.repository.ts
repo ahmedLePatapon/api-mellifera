@@ -6,65 +6,65 @@ import type { RefreshToken as PrismaRefreshToken } from '../../generated/prisma/
 
 @Injectable()
 export class PrismaRefreshTokenRepository implements IRefreshTokenRepository {
-    constructor(private readonly prisma: PrismaService) { }
+  constructor(private readonly prisma: PrismaService) {}
 
-    async create(entity: RefreshTokenEntity): Promise<RefreshTokenEntity> {
-        const refreshToken = await this.prisma.refreshToken.create({
-            data: {
-                token: entity.token,
-                userId: entity.userId,
-                expiresAt: entity.expiresAt,
-            },
-        });
+  async create(entity: RefreshTokenEntity): Promise<RefreshTokenEntity> {
+    const refreshToken = await this.prisma.refreshToken.create({
+      data: {
+        token: entity.token,
+        userId: entity.userId,
+        expiresAt: entity.expiresAt,
+      },
+    });
 
-        return this.toDomain(refreshToken);
-    }
+    return this.toDomain(refreshToken);
+  }
 
-    async findByToken(tokenHash: string): Promise<RefreshTokenEntity | null> {
-        const refreshToken = await this.prisma.refreshToken.findUnique({
-            where: { token: tokenHash },
-        });
+  async findByToken(tokenHash: string): Promise<RefreshTokenEntity | null> {
+    const refreshToken = await this.prisma.refreshToken.findUnique({
+      where: { token: tokenHash },
+    });
 
-        if (!refreshToken) return null;
+    if (!refreshToken) return null;
 
-        return this.toDomain(refreshToken);
-    }
+    return this.toDomain(refreshToken);
+  }
 
-    async revokeByToken(tokenHash: string): Promise<void> {
-        await this.prisma.refreshToken.update({
-            where: { token: tokenHash },
-            data: { revokedAt: new Date() },
-        });
-    }
+  async revokeByToken(tokenHash: string): Promise<void> {
+    await this.prisma.refreshToken.update({
+      where: { token: tokenHash },
+      data: { revokedAt: new Date() },
+    });
+  }
 
-    async revokeAllByUserId(userId: string): Promise<void> {
-        await this.prisma.refreshToken.updateMany({
-            where: {
-                userId,
-                revokedAt: null,
-            },
-            data: { revokedAt: new Date() },
-        });
-    }
+  async revokeAllByUserId(userId: string): Promise<void> {
+    await this.prisma.refreshToken.updateMany({
+      where: {
+        userId,
+        revokedAt: null,
+      },
+      data: { revokedAt: new Date() },
+    });
+  }
 
-    async deleteExpired(): Promise<number> {
-        const result = await this.prisma.refreshToken.deleteMany({
-            where: {
-                expiresAt: { lt: new Date() },
-            },
-        });
+  async deleteExpired(): Promise<number> {
+    const result = await this.prisma.refreshToken.deleteMany({
+      where: {
+        expiresAt: { lt: new Date() },
+      },
+    });
 
-        return result.count;
-    }
+    return result.count;
+  }
 
-    private toDomain(token: PrismaRefreshToken): RefreshTokenEntity {
-        return RefreshTokenEntity.fromPersistence({
-            id: token.id,
-            token: token.token,
-            userId: token.userId,
-            expiresAt: token.expiresAt,
-            revokedAt: token.revokedAt,
-            createdAt: token.createdAt,
-        });
-    }
+  private toDomain(token: PrismaRefreshToken): RefreshTokenEntity {
+    return RefreshTokenEntity.fromPersistence({
+      id: token.id,
+      token: token.token,
+      userId: token.userId,
+      expiresAt: token.expiresAt,
+      revokedAt: token.revokedAt,
+      createdAt: token.createdAt,
+    });
+  }
 }

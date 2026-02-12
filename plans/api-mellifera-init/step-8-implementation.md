@@ -1,9 +1,11 @@
 # Step 8 — Documentation Swagger & Finalisation
 
 ## Goal
+
 Compléter la documentation Swagger avec les décorateurs `@ApiQuery` manquants sur le contrôleur Rucher, finaliser le `.env.example`, et créer un `README.md` complet décrivant le projet, l'installation, la configuration et l'utilisation.
 
 ## Prerequisites
+
 - Steps 1–7 complétées (NestJS init, Prisma schema, Domaine, Application CQRS, Repositories Prisma, Auth JWT, Contrôleurs REST)
 - `npm run build` compile sans erreur
 - Branche `feat/doc-swagger-finalisation`
@@ -25,25 +27,19 @@ Le paramètre `search` sur `GET /ruchers` est un `@Query('search')` nu, sans dé
 Remplacer le bloc d'import Swagger **existant** :
 
 ```typescript
-import {
-    ApiTags,
-    ApiOperation,
-    ApiResponse,
-    ApiBearerAuth,
-    ApiParam,
-} from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam } from '@nestjs/swagger';
 ```
 
 Par :
 
 ```typescript
 import {
-    ApiTags,
-    ApiOperation,
-    ApiResponse,
-    ApiBearerAuth,
-    ApiParam,
-    ApiQuery,
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+  ApiParam,
+  ApiQuery,
 } from '@nestjs/swagger';
 ```
 
@@ -75,10 +71,12 @@ Par :
 ```
 
 ##### Step 8.1 Verification Checklist
+
 - [ ] `npm run build` compile sans erreur
 - [ ] Le paramètre `search` est visible dans Swagger UI sur `GET /api/v1/ruchers`
 
 #### Step 8.1 STOP & COMMIT
+
 **STOP & COMMIT:** Agent must stop here and wait for the user to test, stage, and commit the change.
 
 ---
@@ -124,10 +122,12 @@ JWT_REFRESH_EXPIRATION="7d"
 ```
 
 ##### Step 8.2 Verification Checklist
+
 - [ ] Le fichier `.env.example` contient toutes les variables documentées
 - [ ] Aucune valeur sensible réelle n'est présente (DATABASE_URL avec placeholder)
 
 #### Step 8.2 STOP & COMMIT
+
 **STOP & COMMIT:** Agent must stop here and wait for the user to test, stage, and commit the change.
 
 ---
@@ -175,35 +175,38 @@ API REST de gestion apicole construite avec **NestJS**, **Prisma Postgres** et u
 
 ## Stack technique
 
-| Couche | Technologie |
-|--------|------------|
-| Framework | [NestJS](https://nestjs.com/) 11 |
-| ORM | [Prisma](https://www.prisma.io/) 7.3 avec Prisma Postgres |
-| Auth | JWT (access + refresh tokens), Passport, bcrypt |
-| Validation | class-validator, class-transformer, Joi |
-| Pattern | CQRS (`@nestjs/cqrs`), Clean Architecture, DDD léger |
-| Documentation | Swagger / OpenAPI (`@nestjs/swagger`) |
-| Langage | TypeScript 5 (mode strict) |
+| Couche        | Technologie                                               |
+| ------------- | --------------------------------------------------------- |
+| Framework     | [NestJS](https://nestjs.com/) 11                          |
+| ORM           | [Prisma](https://www.prisma.io/) 7.3 avec Prisma Postgres |
+| Auth          | JWT (access + refresh tokens), Passport, bcrypt           |
+| Validation    | class-validator, class-transformer, Joi                   |
+| Pattern       | CQRS (`@nestjs/cqrs`), Clean Architecture, DDD léger      |
+| Documentation | Swagger / OpenAPI (`@nestjs/swagger`)                     |
+| Langage       | TypeScript 5 (mode strict)                                |
 
 ---
 
 ## Architecture
-
 ```
+
 src/
-├── domain/            # Entités, Value Objects, interfaces Repository (aucune dépendance externe)
-├── application/       # Use Cases — Commands & Queries (CQRS)
-├── infrastructure/    # Implémentations concrètes — Prisma repositories, Auth, Prisma service
-├── interfaces/        # Contrôleurs REST, DTOs, Guards, Filtres, Intercepteurs
-├── config/            # Configuration NestJS (env validation, AppConfig)
-├── shared/            # Types partagés, constantes (tokens d'injection)
-└── generated/         # Client Prisma auto-généré
+├── domain/ # Entités, Value Objects, interfaces Repository (aucune dépendance externe)
+├── application/ # Use Cases — Commands & Queries (CQRS)
+├── infrastructure/ # Implémentations concrètes — Prisma repositories, Auth, Prisma service
+├── interfaces/ # Contrôleurs REST, DTOs, Guards, Filtres, Intercepteurs
+├── config/ # Configuration NestJS (env validation, AppConfig)
+├── shared/ # Types partagés, constantes (tokens d'injection)
+└── generated/ # Client Prisma auto-généré
+
 ```
 
 **Flux d'une requête :**
 ```
+
 Client → Controller (interfaces/) → CommandBus/QueryBus → Handler (application/) → Repository interface (domain/) → Prisma Repository (infrastructure/) → DB
-```
+
+````
 
 ---
 
@@ -224,7 +227,7 @@ cd api-mellifera
 
 # Installer les dépendances
 npm install
-```
+````
 
 ---
 
@@ -238,13 +241,13 @@ cp .env.example .env
 
 2. Renseigner les variables dans `.env` :
 
-| Variable | Description | Exemple |
-|----------|------------|---------|
-| `PORT` | Port du serveur HTTP | `3000` |
-| `DATABASE_URL` | URL Prisma Postgres (depuis console.prisma.io) | `prisma+postgres://accelerate.prisma-data.net/?api_key=...` |
-| `JWT_SECRET` | Clé secrète JWT (min 16 caractères) | `votre-clé-secrète-ici` |
-| `JWT_ACCESS_EXPIRATION` | Durée de l'access token | `15m` |
-| `JWT_REFRESH_EXPIRATION` | Durée du refresh token | `7d` |
+| Variable                 | Description                                    | Exemple                                                     |
+| ------------------------ | ---------------------------------------------- | ----------------------------------------------------------- |
+| `PORT`                   | Port du serveur HTTP                           | `3000`                                                      |
+| `DATABASE_URL`           | URL Prisma Postgres (depuis console.prisma.io) | `prisma+postgres://accelerate.prisma-data.net/?api_key=...` |
+| `JWT_SECRET`             | Clé secrète JWT (min 16 caractères)            | `votre-clé-secrète-ici`                                     |
+| `JWT_ACCESS_EXPIRATION`  | Durée de l'access token                        | `15m`                                                       |
+| `JWT_REFRESH_EXPIRATION` | Durée du refresh token                         | `7d`                                                        |
 
 ---
 
@@ -313,42 +316,42 @@ Toutes les routes, paramètres, DTOs et réponses y sont documentés. Utilisez l
 
 ### Auth
 
-| Méthode | Endpoint | Description | Auth |
-|---------|----------|-------------|------|
-| `POST` | `/api/v1/auth/register` | Créer un compte | Non |
-| `POST` | `/api/v1/auth/login` | Se connecter | Non |
-| `POST` | `/api/v1/auth/refresh` | Rafraîchir les tokens | Refresh token |
-| `POST` | `/api/v1/auth/logout` | Se déconnecter | Oui |
+| Méthode | Endpoint                | Description           | Auth          |
+| ------- | ----------------------- | --------------------- | ------------- |
+| `POST`  | `/api/v1/auth/register` | Créer un compte       | Non           |
+| `POST`  | `/api/v1/auth/login`    | Se connecter          | Non           |
+| `POST`  | `/api/v1/auth/refresh`  | Rafraîchir les tokens | Refresh token |
+| `POST`  | `/api/v1/auth/logout`   | Se déconnecter        | Oui           |
 
 ### Ruchers
 
-| Méthode | Endpoint | Description | Auth |
-|---------|----------|-------------|------|
-| `POST` | `/api/v1/ruchers` | Créer un rucher | Oui |
-| `GET` | `/api/v1/ruchers` | Lister ses ruchers | Oui |
-| `GET` | `/api/v1/ruchers/:id` | Détail d'un rucher | Oui |
-| `PUT` | `/api/v1/ruchers/:id` | Modifier un rucher | Oui |
-| `DELETE` | `/api/v1/ruchers/:id` | Supprimer un rucher | Oui |
+| Méthode  | Endpoint              | Description         | Auth |
+| -------- | --------------------- | ------------------- | ---- |
+| `POST`   | `/api/v1/ruchers`     | Créer un rucher     | Oui  |
+| `GET`    | `/api/v1/ruchers`     | Lister ses ruchers  | Oui  |
+| `GET`    | `/api/v1/ruchers/:id` | Détail d'un rucher  | Oui  |
+| `PUT`    | `/api/v1/ruchers/:id` | Modifier un rucher  | Oui  |
+| `DELETE` | `/api/v1/ruchers/:id` | Supprimer un rucher | Oui  |
 
 ### Ruches
 
-| Méthode | Endpoint | Description | Auth |
-|---------|----------|-------------|------|
-| `POST` | `/api/v1/ruchers/:rucherId/ruches` | Créer une ruche | Oui |
-| `GET` | `/api/v1/ruchers/:rucherId/ruches` | Lister les ruches d'un rucher | Oui |
-| `GET` | `/api/v1/ruches/:id` | Détail d'une ruche | Oui |
-| `PUT` | `/api/v1/ruches/:id` | Modifier une ruche | Oui |
-| `DELETE` | `/api/v1/ruches/:id` | Supprimer une ruche | Oui |
+| Méthode  | Endpoint                           | Description                   | Auth |
+| -------- | ---------------------------------- | ----------------------------- | ---- |
+| `POST`   | `/api/v1/ruchers/:rucherId/ruches` | Créer une ruche               | Oui  |
+| `GET`    | `/api/v1/ruchers/:rucherId/ruches` | Lister les ruches d'un rucher | Oui  |
+| `GET`    | `/api/v1/ruches/:id`               | Détail d'une ruche            | Oui  |
+| `PUT`    | `/api/v1/ruches/:id`               | Modifier une ruche            | Oui  |
+| `DELETE` | `/api/v1/ruches/:id`               | Supprimer une ruche           | Oui  |
 
 ### Inspections
 
-| Méthode | Endpoint | Description | Auth |
-|---------|----------|-------------|------|
-| `POST` | `/api/v1/ruches/:rucheId/inspections` | Créer une inspection | Oui |
-| `GET` | `/api/v1/ruches/:rucheId/inspections` | Lister les inspections d'une ruche | Oui |
-| `GET` | `/api/v1/inspections/:id` | Détail d'une inspection | Oui |
-| `PUT` | `/api/v1/inspections/:id` | Modifier une inspection | Oui |
-| `DELETE` | `/api/v1/inspections/:id` | Supprimer une inspection | Oui |
+| Méthode  | Endpoint                              | Description                        | Auth |
+| -------- | ------------------------------------- | ---------------------------------- | ---- |
+| `POST`   | `/api/v1/ruches/:rucheId/inspections` | Créer une inspection               | Oui  |
+| `GET`    | `/api/v1/ruches/:rucheId/inspections` | Lister les inspections d'une ruche | Oui  |
+| `GET`    | `/api/v1/inspections/:id`             | Détail d'une inspection            | Oui  |
+| `PUT`    | `/api/v1/inspections/:id`             | Modifier une inspection            | Oui  |
+| `DELETE` | `/api/v1/inspections/:id`             | Supprimer une inspection           | Oui  |
 
 ---
 
@@ -377,12 +380,12 @@ Le refresh token est **rotatif** : chaque appel à `/auth/refresh` révoque l'an
 
 Tous les endpoints de liste supportent la pagination et le tri :
 
-| Paramètre | Type | Défaut | Description |
-|-----------|------|--------|-------------|
-| `page` | number | `1` | Numéro de la page |
-| `limit` | number | `10` | Éléments par page (max 100) |
-| `sortBy` | string | — | Champ de tri (ex: `createdAt`, `nom`) |
-| `sortOrder` | string | `desc` | Ordre de tri (`asc` ou `desc`) |
+| Paramètre   | Type   | Défaut | Description                           |
+| ----------- | ------ | ------ | ------------------------------------- |
+| `page`      | number | `1`    | Numéro de la page                     |
+| `limit`     | number | `10`   | Éléments par page (max 100)           |
+| `sortBy`    | string | —      | Champ de tri (ex: `createdAt`, `nom`) |
+| `sortOrder` | string | `desc` | Ordre de tri (`asc` ou `desc`)        |
 
 ### Filtres spécifiques
 
@@ -423,13 +426,14 @@ Tous les endpoints de liste supportent la pagination et le tri :
 
 ## Scripts disponibles
 
-| Commande | Description |
-|----------|-------------|
-| `npm run build` | Compiler le projet TypeScript |
-| `npm run start` | Lancer en production |
+| Commande            | Description                          |
+| ------------------- | ------------------------------------ |
+| `npm run build`     | Compiler le projet TypeScript        |
+| `npm run start`     | Lancer en production                 |
 | `npm run start:dev` | Lancer en mode développement (watch) |
-| `npm run lint` | Vérifier le code avec ESLint |
-| `npm run format` | Formater le code avec Prettier |
+| `npm run lint`      | Vérifier le code avec ESLint         |
+| `npm run format`    | Formater le code avec Prettier       |
+
 ```
 
 ##### Step 8.3 Verification Checklist
@@ -474,3 +478,4 @@ Tous les endpoints de liste supportent la pagination et le tri :
 #### Step 8.4 STOP & COMMIT
 **STOP & COMMIT:** Agent must stop here and wait for the user to test, stage, and commit the change.
 Commit message : `docs: add Swagger documentation, README & finalize .env.example`
+```

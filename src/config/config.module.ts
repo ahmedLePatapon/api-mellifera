@@ -4,17 +4,17 @@ import configuration from './configuration';
 import { envValidationSchema } from './env.validation';
 
 @Module({
-    imports: [
-        ConfigModule.forRoot({
-            isGlobal: true,
-            envFilePath: '.env',
-            load: [configuration],
-            validationSchema: envValidationSchema,
-            validationOptions: {
-                abortEarly: true,
-                allowUnknown: true,
-            },
-        }),
-    ],
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: '.env',
+      load: [configuration],
+      validationSchema: envValidationSchema,
+      validationOptions: {
+        abortEarly: true,
+        allowUnknown: true,
+      },
+    }),
+  ],
 })
-export class AppConfigModule { }
+export class AppConfigModule {}

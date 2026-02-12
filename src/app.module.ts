@@ -9,75 +9,75 @@ import { RucheController } from './interfaces/ruche/ruche.controller';
 import { InspectionController } from './interfaces/inspection/inspection.controller';
 
 import {
-    USER_REPOSITORY,
-    REFRESH_TOKEN_REPOSITORY,
-    RUCHER_REPOSITORY,
-    RUCHE_REPOSITORY,
-    INSPECTION_REPOSITORY,
+  USER_REPOSITORY,
+  REFRESH_TOKEN_REPOSITORY,
+  RUCHER_REPOSITORY,
+  RUCHE_REPOSITORY,
+  INSPECTION_REPOSITORY,
 } from './shared/constants';
 
 import {
-    PrismaUserRepository,
-    PrismaRefreshTokenRepository,
-    PrismaRucherRepository,
-    PrismaRucheRepository,
-    PrismaInspectionRepository,
+  PrismaUserRepository,
+  PrismaRefreshTokenRepository,
+  PrismaRucherRepository,
+  PrismaRucheRepository,
+  PrismaInspectionRepository,
 } from './infrastructure/repositories';
 
 import {
-    RegisterUserHandler,
-    GetUserHandler,
-    CreateRucherHandler,
-    UpdateRucherHandler,
-    DeleteRucherHandler,
-    ListRuchersHandler,
-    GetRucherHandler,
-    CreateRucheHandler,
-    UpdateRucheHandler,
-    DeleteRucheHandler,
-    ListRuchesHandler,
-    GetRucheHandler,
-    CreateInspectionHandler,
-    UpdateInspectionHandler,
-    DeleteInspectionHandler,
-    ListInspectionsHandler,
-    GetInspectionHandler,
+  RegisterUserHandler,
+  GetUserHandler,
+  CreateRucherHandler,
+  UpdateRucherHandler,
+  DeleteRucherHandler,
+  ListRuchersHandler,
+  GetRucherHandler,
+  CreateRucheHandler,
+  UpdateRucheHandler,
+  DeleteRucheHandler,
+  ListRuchesHandler,
+  GetRucheHandler,
+  CreateInspectionHandler,
+  UpdateInspectionHandler,
+  DeleteInspectionHandler,
+  ListInspectionsHandler,
+  GetInspectionHandler,
 } from './application';
 
 const CommandHandlers = [
-    RegisterUserHandler,
-    CreateRucherHandler,
-    UpdateRucherHandler,
-    DeleteRucherHandler,
-    CreateRucheHandler,
-    UpdateRucheHandler,
-    DeleteRucheHandler,
-    CreateInspectionHandler,
-    UpdateInspectionHandler,
-    DeleteInspectionHandler,
+  RegisterUserHandler,
+  CreateRucherHandler,
+  UpdateRucherHandler,
+  DeleteRucherHandler,
+  CreateRucheHandler,
+  UpdateRucheHandler,
+  DeleteRucheHandler,
+  CreateInspectionHandler,
+  UpdateInspectionHandler,
+  DeleteInspectionHandler,
 ];
 
 const QueryHandlers = [
-    GetUserHandler,
-    ListRuchersHandler,
-    GetRucherHandler,
-    ListRuchesHandler,
-    GetRucheHandler,
-    ListInspectionsHandler,
-    GetInspectionHandler,
+  GetUserHandler,
+  ListRuchersHandler,
+  GetRucherHandler,
+  ListRuchesHandler,
+  GetRucheHandler,
+  ListInspectionsHandler,
+  GetInspectionHandler,
 ];
 
 const RepositoryProviders = [
-    { provide: USER_REPOSITORY, useClass: PrismaUserRepository },
-    { provide: REFRESH_TOKEN_REPOSITORY, useClass: PrismaRefreshTokenRepository },
-    { provide: RUCHER_REPOSITORY, useClass: PrismaRucherRepository },
-    { provide: RUCHE_REPOSITORY, useClass: PrismaRucheRepository },
-    { provide: INSPECTION_REPOSITORY, useClass: PrismaInspectionRepository },
+  { provide: USER_REPOSITORY, useClass: PrismaUserRepository },
+  { provide: REFRESH_TOKEN_REPOSITORY, useClass: PrismaRefreshTokenRepository },
+  { provide: RUCHER_REPOSITORY, useClass: PrismaRucherRepository },
+  { provide: RUCHE_REPOSITORY, useClass: PrismaRucheRepository },
+  { provide: INSPECTION_REPOSITORY, useClass: PrismaInspectionRepository },
 ];
 
 @Module({
-    imports: [AppConfigModule, PrismaModule, CqrsModule.forRoot(), AuthModule],
-    controllers: [AuthController, RucherController, RucheController, InspectionController],
-    providers: [...RepositoryProviders, ...CommandHandlers, ...QueryHandlers],
+  imports: [AppConfigModule, PrismaModule, CqrsModule.forRoot(), AuthModule],
+  controllers: [AuthController, RucherController, RucheController, InspectionController],
+  providers: [...RepositoryProviders, ...CommandHandlers, ...QueryHandlers],
 })
-export class AppModule { }
+export class AppModule {}

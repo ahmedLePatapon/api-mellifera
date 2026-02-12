@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { JwtModule } from '@nestjs/jwt';
+import { JwtModule, type JwtModuleOptions } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { ConfigService } from '@nestjs/config';
 import { AuthService } from './auth.service';
@@ -10,24 +10,24 @@ import { PrismaUserRepository } from '@infrastructure/repositories/prisma-user.r
 import { PrismaRefreshTokenRepository } from '@infrastructure/repositories/prisma-refresh-token.repository';
 
 @Module({
-    imports: [
-        PassportModule.register({ defaultStrategy: 'jwt' }),
-        JwtModule.registerAsync({
-            inject: [ConfigService],
-            useFactory: (configService: ConfigService) => {
-                const secret = configService.get<string>('jwt.secret');
-                const expiresIn = configService.get<string>('jwt.accessExpiration') ?? '15m';
-                return ({ secret, signOptions: { expiresIn } } as any);
-            },
-        }),
-    ],
-    providers: [
-        AuthService,
-        JwtStrategy,
-        JwtRefreshStrategy,
-        { provide: USER_REPOSITORY, useClass: PrismaUserRepository },
-        { provide: REFRESH_TOKEN_REPOSITORY, useClass: PrismaRefreshTokenRepository },
-    ],
-    exports: [AuthService, JwtModule, PassportModule],
+  imports: [
+    PassportModule.register({ defaultStrategy: 'jwt' }),
+    JwtModule.registerAsync({
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => {
+        const secret = configService.get<string>('jwt.secret');
+        const expiresIn = configService.get<string>('jwt.accessExpiration') ?? '15m';
+        return { secret, signOptions: { expiresIn } } as JwtModuleOptions;
+      },
+    }),
+  ],
+  providers: [
+    AuthService,
+    JwtStrategy,
+    JwtRefreshStrategy,
+    { provide: USER_REPOSITORY, useClass: PrismaUserRepository },
+    { provide: REFRESH_TOKEN_REPOSITORY, useClass: PrismaRefreshTokenRepository },
+  ],
+  exports: [AuthService, JwtModule, PassportModule],
 })
-export class AuthModule { }
+export class AuthModule {}

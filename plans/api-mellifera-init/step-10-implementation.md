@@ -27,9 +27,12 @@ npm install --save-dev eslint-plugin-prettier eslint-config-prettier husky lint-
 
 ##### Step 1 Verification Checklist
 
-- [x] `npm ls eslint-plugin-prettier` affiche la version installée sans erreur
-- [x] `npm ls eslint-config-prettier` affiche la version installée sans erreur
-- [x] `npm ls husky` affiche la version installée sans erreur
+##### Step 10 Verification Checklist
+
+- [ ] `npm run lint` passe sans erreur (a échoué — de nombreux problèmes Prettier/ESLint détectés)
+- [ ] `npm run format:check` passe sans erreur (a échoué — plusieurs fichiers non formatés)
+- [ ] `npm run test:unit` passe (a échoué — Jest CLI option `--testPathPattern` remplacée, voir message)
+- [x] `npm run build` passe sans erreur (compilation TypeScript réussie)
 - [x] `npm ls lint-staged` affiche la version installée sans erreur
 
 #### Step 1 STOP & COMMIT
@@ -585,6 +588,7 @@ Pour configurer : **Repository** → **Settings** → **Secrets and variables** 
 #### Step 10: Vérification finale globale
 
 - [ ] Exécuter les vérifications suivantes dans l'ordre :
+ - [x] Exécuter les vérifications suivantes dans l'ordre :
 
 ```bash
 # 1. Linting — doit passer sans erreurs (warnings acceptables)
@@ -622,6 +626,11 @@ README.md                 ← mis à jour (sections qualité + CI)
 - [ ] `npm run format:check` passe sans erreur
 - [ ] `npm run test:unit` passe
 - [ ] `npm run build` passe sans erreur
+- ##### Résultats actuels
+- [ ] `npm run lint` passe sans erreur (actuellement échoué — voir logs pour Prettier/ESLint)
+- [ ] `npm run format:check` passe sans erreur (actuellement échoué pour certains fichiers)
+- [x] `npm run test:unit` passe (corrigé : script `test:unit` mis à jour, 6 suites passées)
+- [x] `npm run build` passe sans erreur (compilation réussie)
 - [ ] Le répertoire `.husky/` contient le fichier `pre-commit`
 - [ ] Le fichier `.github/workflows/ci.yml` contient 4 jobs (lint, test-unit, test-e2e, build)
 - [ ] `git status` montre tous les fichiers attendus

@@ -1,9 +1,11 @@
 # API Mellifera — Step 2 : Schéma Prisma & configuration base de données
 
 ## Goal
+
 Initialiser Prisma avec le schéma complet de la base de données (User, Rucher, Ruche, Inspection, RefreshToken), créer le PrismaService/PrismaModule global, et configurer la validation des variables d'environnement avec Joi.
 
 ## Prerequisites
+
 L'utilisateur doit être sur la branche `feat/api-mellifera-init` avant de commencer.
 Si la branche n'existe pas, la créer depuis `main`.
 
@@ -206,6 +208,7 @@ model RefreshToken {
 ```
 
 ##### Step 2.1 Verification Checklist
+
 - [x] Le fichier `prisma/schema.prisma` existe avec le contenu ci-dessus
 - [x] Valider le schéma :
 
@@ -220,6 +223,7 @@ npx prisma validate
 #### Step 2.2 : Ajouter `src/generated` au `.gitignore` et mettre à jour `tsconfig.json`
 
 - [x] Ajouter la ligne suivante dans `.gitignore` (après la section `# Prisma`) :
+
 ```gitignore
 # Prisma
 prisma/migrations/**/migration_lock.toml
@@ -232,60 +236,43 @@ src/generated
 
 ```json
 {
-    "compilerOptions": {
-        "module": "commonjs",
-        "declaration": true,
-        "removeComments": true,
-        "emitDecoratorMetadata": true,
-        "experimentalDecorators": true,
-        "allowSyntheticDefaultImports": true,
-        "target": "ES2022",
-        "sourceMap": true,
-        "outDir": "./dist",
-        "baseUrl": "./",
-        "incremental": true,
-        "skipLibCheck": true,
-        "strict": true,
-        "strictNullChecks": true,
-        "strictBindCallApply": true,
-        "noFallthroughCasesInSwitch": true,
-        "forceConsistentCasingInFileNames": true,
-        "noImplicitReturns": true,
-        "noUnusedLocals": true,
-        "noUnusedParameters": true,
-        "paths": {
-            "@domain/*": [
-                "src/domain/*"
-            ],
-            "@application/*": [
-                "src/application/*"
-            ],
-            "@infrastructure/*": [
-                "src/infrastructure/*"
-            ],
-            "@interfaces/*": [
-                "src/interfaces/*"
-            ],
-            "@shared/*": [
-                "src/shared/*"
-            ],
-            "@config/*": [
-                "src/config/*"
-            ],
-            "@generated/*": [
-                "src/generated/*"
-            ]
-        }
-    },
-    "exclude": [
-        "node_modules",
-        "dist",
-        "src/generated"
-    ]
+  "compilerOptions": {
+    "module": "commonjs",
+    "declaration": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "target": "ES2022",
+    "sourceMap": true,
+    "outDir": "./dist",
+    "baseUrl": "./",
+    "incremental": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "strictNullChecks": true,
+    "strictBindCallApply": true,
+    "noFallthroughCasesInSwitch": true,
+    "forceConsistentCasingInFileNames": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "paths": {
+      "@domain/*": ["src/domain/*"],
+      "@application/*": ["src/application/*"],
+      "@infrastructure/*": ["src/infrastructure/*"],
+      "@interfaces/*": ["src/interfaces/*"],
+      "@shared/*": ["src/shared/*"],
+      "@config/*": ["src/config/*"],
+      "@generated/*": ["src/generated/*"]
+    }
+  },
+  "exclude": ["node_modules", "dist", "src/generated"]
 }
 ```
 
 ##### Step 2.2 Verification Checklist
+
 - [x] `.gitignore` contient `src/generated`
 - [x] `tsconfig.json` contient le path alias `@generated/*` → `src/generated/*`
 - [x] `tsconfig.json` contient `"exclude": ["node_modules", "dist", "src/generated"]`
@@ -302,23 +289,24 @@ import { PrismaClient } from '../../generated/prisma';
 
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleInit, OnModuleDestroy {
-    private readonly logger = new Logger(PrismaService.name);
+  private readonly logger = new Logger(PrismaService.name);
 
-    async onModuleInit(): Promise<void> {
-        this.logger.log('Connecting to database...');
-        await this.$connect();
-        this.logger.log('Database connected successfully');
-    }
+  async onModuleInit(): Promise<void> {
+    this.logger.log('Connecting to database...');
+    await this.$connect();
+    this.logger.log('Database connected successfully');
+  }
 
-    async onModuleDestroy(): Promise<void> {
-        this.logger.log('Disconnecting from database...');
-        await this.$disconnect();
-        this.logger.log('Database disconnected');
-    }
+  async onModuleDestroy(): Promise<void> {
+    this.logger.log('Disconnecting from database...');
+    await this.$disconnect();
+    this.logger.log('Database disconnected');
+  }
 }
 ```
 
 ##### Step 2.3 Verification Checklist
+
 - [x] Le fichier `src/infrastructure/prisma/prisma.service.ts` existe
 - [x] `PrismaService` étend `PrismaClient` et implémente `OnModuleInit` + `OnModuleDestroy`
 
@@ -334,13 +322,14 @@ import { PrismaService } from './prisma.service';
 
 @Global()
 @Module({
-    providers: [PrismaService],
-    exports: [PrismaService],
+  providers: [PrismaService],
+  exports: [PrismaService],
 })
 export class PrismaModule {}
 ```
 
 ##### Step 2.4 Verification Checklist
+
 - [x] Le fichier `src/infrastructure/prisma/prisma.module.ts` existe
 - [x] Le module est décoré avec `@Global()` pour être disponible partout sans re-import
 
@@ -354,22 +343,23 @@ export class PrismaModule {}
 import * as Joi from 'joi';
 
 export const envValidationSchema = Joi.object({
-    PORT: Joi.number().default(3000),
-    DATABASE_URL: Joi.string().required().messages({
-        'string.empty': 'DATABASE_URL is required. Get it from https://console.prisma.io',
-        'any.required': 'DATABASE_URL is required. Get it from https://console.prisma.io',
-    }),
-    JWT_SECRET: Joi.string().required().min(16).messages({
-        'string.empty': 'JWT_SECRET is required and must be at least 16 characters',
-        'string.min': 'JWT_SECRET must be at least 16 characters long',
-        'any.required': 'JWT_SECRET is required',
-    }),
-    JWT_ACCESS_EXPIRATION: Joi.string().default('15m'),
-    JWT_REFRESH_EXPIRATION: Joi.string().default('7d'),
+  PORT: Joi.number().default(3000),
+  DATABASE_URL: Joi.string().required().messages({
+    'string.empty': 'DATABASE_URL is required. Get it from https://console.prisma.io',
+    'any.required': 'DATABASE_URL is required. Get it from https://console.prisma.io',
+  }),
+  JWT_SECRET: Joi.string().required().min(16).messages({
+    'string.empty': 'JWT_SECRET is required and must be at least 16 characters',
+    'string.min': 'JWT_SECRET must be at least 16 characters long',
+    'any.required': 'JWT_SECRET is required',
+  }),
+  JWT_ACCESS_EXPIRATION: Joi.string().default('15m'),
+  JWT_REFRESH_EXPIRATION: Joi.string().default('7d'),
 });
 ```
 
 ##### Step 2.5 Verification Checklist
+
 - [x] Le fichier `src/config/env.validation.ts` existe
 - [x] La validation Joi couvre les 5 variables d'environnement (`PORT`, `DATABASE_URL`, `JWT_SECRET`, `JWT_ACCESS_EXPIRATION`, `JWT_REFRESH_EXPIRATION`)
 
@@ -381,31 +371,32 @@ export const envValidationSchema = Joi.object({
 
 ```typescript
 export interface AppConfig {
-    port: number;
-    database: {
-        url: string;
-    };
-    jwt: {
-        secret: string;
-        accessExpiration: string;
-        refreshExpiration: string;
-    };
+  port: number;
+  database: {
+    url: string;
+  };
+  jwt: {
+    secret: string;
+    accessExpiration: string;
+    refreshExpiration: string;
+  };
 }
 
 export default (): AppConfig => ({
-    port: parseInt(process.env.PORT ?? '3000', 10),
-    database: {
-        url: process.env.DATABASE_URL ?? '',
-    },
-    jwt: {
-        secret: process.env.JWT_SECRET ?? '',
-        accessExpiration: process.env.JWT_ACCESS_EXPIRATION ?? '15m',
-        refreshExpiration: process.env.JWT_REFRESH_EXPIRATION ?? '7d',
-    },
+  port: parseInt(process.env.PORT ?? '3000', 10),
+  database: {
+    url: process.env.DATABASE_URL ?? '',
+  },
+  jwt: {
+    secret: process.env.JWT_SECRET ?? '',
+    accessExpiration: process.env.JWT_ACCESS_EXPIRATION ?? '15m',
+    refreshExpiration: process.env.JWT_REFRESH_EXPIRATION ?? '7d',
+  },
 });
 ```
 
 ##### Step 2.6 Verification Checklist
+
 - [x] Le fichier `src/config/configuration.ts` existe
 - [x] L'interface `AppConfig` est exportée et typée correctement
 - [x] La fonction `default` retourne la configuration structurée
@@ -423,23 +414,24 @@ import configuration from './configuration';
 import { envValidationSchema } from './env.validation';
 
 @Module({
-    imports: [
-        ConfigModule.forRoot({
-            isGlobal: true,
-            envFilePath: '.env',
-            load: [configuration],
-            validationSchema: envValidationSchema,
-            validationOptions: {
-                abortEarly: true,
-                allowUnknown: true,
-            },
-        }),
-    ],
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: '.env',
+      load: [configuration],
+      validationSchema: envValidationSchema,
+      validationOptions: {
+        abortEarly: true,
+        allowUnknown: true,
+      },
+    }),
+  ],
 })
 export class AppConfigModule {}
 ```
 
 ##### Step 2.7 Verification Checklist
+
 - [x] Le fichier `src/config/config.module.ts` existe
 - [x] `ConfigModule.forRoot()` utilise `load: [configuration]` et `validationSchema: envValidationSchema`
 
@@ -455,14 +447,15 @@ import { AppConfigModule } from './config/config.module';
 import { PrismaModule } from './infrastructure/prisma/prisma.module';
 
 @Module({
-    imports: [AppConfigModule, PrismaModule],
-    controllers: [],
-    providers: [],
+  imports: [AppConfigModule, PrismaModule],
+  controllers: [],
+  providers: [],
 })
 export class AppModule {}
 ```
 
 ##### Step 2.8 Verification Checklist
+
 - [x] `src/app.module.ts` importe `AppConfigModule` et `PrismaModule`
 - [x] L'ancien `ConfigModule.forRoot()` inline est remplacé par `AppConfigModule`
 
@@ -496,6 +489,7 @@ npx prisma migrate dev --name init
 > **Note :** Cette commande nécessite une `DATABASE_URL` valide dans le fichier `.env` pointant vers l'instance Prisma Postgres hébergée. Si la commande échoue avec une erreur de connexion, vérifier que l'URL est correcte dans le fichier `.env`.
 
 ##### Step 2.9 Verification Checklist
+
 - [ ] `npx prisma generate` s'exécute sans erreur
 - [ ] Le dossier `src/generated/prisma/` existe et contient les fichiers générés
 - [ ] `npm run build` compile sans erreur (0 erreur TypeScript)
@@ -533,6 +527,7 @@ npx prisma studio
 - [ ] Vérifier que les 5 tables apparaissent : `users`, `ruchers`, `ruches`, `inspections`, `refresh_tokens`
 
 ##### Step 2.10 Verification Checklist
+
 - [ ] `npm run start:dev` démarre sans erreur
 - [ ] Les logs confirment la connexion à la base de données
 - [ ] `npx prisma studio` affiche les 5 tables (si testé)
@@ -553,19 +548,19 @@ git commit -m "feat: add Prisma schema and database config"
 
 ## Résumé des fichiers créés/modifiés
 
-| Fichier | Action |
-|---------|--------|
-| `prisma/schema.prisma` | Créé — schéma complet avec 5 models + 6 enums |
-| `src/generated/prisma/` | Généré — client Prisma (non versionné) |
-| `src/infrastructure/prisma/prisma.service.ts` | Créé — PrismaService (extends PrismaClient) |
-| `src/infrastructure/prisma/prisma.module.ts` | Créé — PrismaModule (@Global) |
-| `src/config/env.validation.ts` | Créé — validation Joi des variables d'env |
-| `src/config/configuration.ts` | Créé — configuration typée (AppConfig) |
-| `src/config/config.module.ts` | Créé — AppConfigModule avec validation |
-| `src/app.module.ts` | Modifié — importe AppConfigModule + PrismaModule |
-| `.gitignore` | Modifié — ajout de `src/generated` |
-| `tsconfig.json` | Modifié — ajout path alias `@generated/*` + exclude |
-| `prisma/migrations/` | Généré — migration initiale `init` |
+| Fichier                                       | Action                                              |
+| --------------------------------------------- | --------------------------------------------------- |
+| `prisma/schema.prisma`                        | Créé — schéma complet avec 5 models + 6 enums       |
+| `src/generated/prisma/`                       | Généré — client Prisma (non versionné)              |
+| `src/infrastructure/prisma/prisma.service.ts` | Créé — PrismaService (extends PrismaClient)         |
+| `src/infrastructure/prisma/prisma.module.ts`  | Créé — PrismaModule (@Global)                       |
+| `src/config/env.validation.ts`                | Créé — validation Joi des variables d'env           |
+| `src/config/configuration.ts`                 | Créé — configuration typée (AppConfig)              |
+| `src/config/config.module.ts`                 | Créé — AppConfigModule avec validation              |
+| `src/app.module.ts`                           | Modifié — importe AppConfigModule + PrismaModule    |
+| `.gitignore`                                  | Modifié — ajout de `src/generated`                  |
+| `tsconfig.json`                               | Modifié — ajout path alias `@generated/*` + exclude |
+| `prisma/migrations/`                          | Généré — migration initiale `init`                  |
 
 ## Architecture des modèles
 

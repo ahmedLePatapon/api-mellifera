@@ -12,7 +12,9 @@ Construire une API REST complète de gestion apicole (ruchers, ruches, inspectio
 ## Implementation Steps
 
 ### Step 1: Initialisation du projet NestJS & configuration de base
+
 **Files:**
+
 - `package.json`
 - `tsconfig.json`, `tsconfig.build.json`
 - `nest-cli.json`
@@ -24,6 +26,7 @@ Construire une API REST complète de gestion apicole (ruchers, ruches, inspectio
 
 **What:**
 Initialiser le projet NestJS avec `nest new`, activer le mode TypeScript strict. Installer toutes les dépendances nécessaires :
+
 - **Core :** `@nestjs/config`, `@nestjs/swagger`, `@nestjs/passport`, `@nestjs/jwt`, `@nestjs/cqrs`
 - **Prisma :** `@prisma/client`, `prisma`
 - **Auth :** `passport`, `passport-jwt`, `bcrypt`
@@ -37,7 +40,9 @@ Configurer le `.gitignore`, `.env.example` (DATABASE_URL via Prisma Postgres, JW
 ---
 
 ### Step 2: Schéma Prisma & configuration base de données
+
 **Files:**
+
 - `prisma/schema.prisma`
 - `src/infrastructure/prisma/prisma.module.ts`
 - `src/infrastructure/prisma/prisma.service.ts`
@@ -47,6 +52,7 @@ Configurer le `.gitignore`, `.env.example` (DATABASE_URL via Prisma Postgres, JW
 
 **What:**
 Initialiser Prisma (`npx prisma init`) et définir le schéma complet pour **Prisma Postgres** (instance hébergée) :
+
 - **Models :** `User`, `Rucher`, `Ruche`, `Inspection`, `RefreshToken` avec UUIDs, timestamps, `@map`/`@@map` pour convention snake_case en DB.
 - **Model `RefreshToken` :** `id`, `token` (hash), `userId`, `expiresAt`, `revokedAt`, `createdAt` — permet la révocation et la rotation des refresh tokens.
 - **Enums :** `Role`, `TypeRuche`, `StatutRuche`, `EtatGeneral`, `NiveauReserve`, `Comportement`.
@@ -61,7 +67,9 @@ Créer le `PrismaService` (extends `OnModuleInit`) et `PrismaModule` (global). C
 ---
 
 ### Step 3: Couche Domaine — Entités, Value Objects, Interfaces Repository
+
 **Files:**
+
 - `src/domain/user/entities/user.entity.ts`
 - `src/domain/user/value-objects/email.vo.ts`
 - `src/domain/user/repositories/user.repository.interface.ts`
@@ -77,6 +85,7 @@ Créer le `PrismaService` (extends `OnModuleInit`) et `PrismaModule` (global). C
 
 **What:**
 Implémenter la couche domaine **sans aucune dépendance externe** (pas de Prisma, pas de NestJS) :
+
 - **Entités :** Classes pures TypeScript représentant `User`, `Rucher`, `Ruche`, `Inspection` avec leurs propriétés typées et logique métier de base (validation interne).
 - **Value Objects :** `Email` (validation format email, normalisation), `CoordonneesGps` (validation latitude -90/+90, longitude -180/+180).
 - **Interfaces Repository :** Interfaces définissant les contrats de persistance (`IUserRepository`, `IRucherRepository`, `IRucheRepository`, `IInspectionRepository`, `IRefreshTokenRepository`) avec les tokens d'injection (`Symbol`).
@@ -87,7 +96,9 @@ Implémenter la couche domaine **sans aucune dépendance externe** (pas de Prism
 ---
 
 ### Step 4: Couche Application — Use Cases (Commands & Queries CQRS)
+
 **Files:**
+
 - `src/application/user/commands/register-user.command.ts`
 - `src/application/user/commands/register-user.handler.ts`
 - `src/application/user/queries/get-user.query.ts`
@@ -125,6 +136,7 @@ Implémenter la couche domaine **sans aucune dépendance externe** (pas de Prism
 
 **What:**
 Implémenter les use cases via le pattern CQRS (`@nestjs/cqrs`) :
+
 - **Commands :** Création, mise à jour, suppression pour chaque entité. Chaque handler injecte l'interface repository via `@Inject(SYMBOL)` (dépendance inversée).
 - **Queries :** Lecture unitaire (par ID) et liste (filtrée par userId pour le ownership). Chaque handler utilise le repository en lecture seule.
 - **Pagination & filtrage :** Les queries de liste acceptent `PaginationParams` + filtres métier optionnels (ex: `statut` pour les ruches, `dateFrom`/`dateTo` pour les inspections) et retournent `PaginatedResult<T>`.
@@ -136,7 +148,9 @@ Implémenter les use cases via le pattern CQRS (`@nestjs/cqrs`) :
 ---
 
 ### Step 5: Couche Infrastructure — Implémentation des Repositories Prisma
+
 **Files:**
+
 - `src/infrastructure/repositories/prisma-user.repository.ts`
 - `src/infrastructure/repositories/prisma-rucher.repository.ts`
 - `src/infrastructure/repositories/prisma-ruche.repository.ts`
@@ -144,6 +158,7 @@ Implémenter les use cases via le pattern CQRS (`@nestjs/cqrs`) :
 
 **What:**
 Implémenter les 4 repositories concrets utilisant `PrismaService` :
+
 - Chaque classe `@Injectable()` implémente l'interface repository correspondante.
 - Mapping entre les modèles Prisma (DB) et les entités domaine (logique).
 - Gestion des relations (include) pour les requêtes imbriquées.
@@ -156,7 +171,9 @@ Implémenter les 4 repositories concrets utilisant `PrismaService` :
 ---
 
 ### Step 6: Authentification JWT avec Refresh Tokens & Sécurité
+
 **Files:**
+
 - `src/infrastructure/auth/auth.module.ts`
 - `src/infrastructure/auth/jwt.strategy.ts`
 - `src/infrastructure/auth/jwt-refresh.strategy.ts`
@@ -174,6 +191,7 @@ Implémenter les 4 repositories concrets utilisant `PrismaService` :
 
 **What:**
 Mettre en place l'authentification complète avec **refresh tokens** :
+
 - **`AuthService`** :
   - `register()` : hash bcrypt + création user + génération paire access/refresh tokens.
   - `login()` : vérification credentials + génération paire access/refresh tokens.
@@ -195,7 +213,9 @@ Mettre en place l'authentification complète avec **refresh tokens** :
 ---
 
 ### Step 7: Couche Interfaces — Contrôleurs REST, DTOs, Modules
+
 **Files:**
+
 - `src/interfaces/rucher/rucher.controller.ts`
 - `src/interfaces/rucher/rucher.module.ts`
 - `src/interfaces/rucher/dto/create-rucher.dto.ts`
@@ -215,16 +235,19 @@ Mettre en place l'authentification complète avec **refresh tokens** :
 
 **What:**
 Créer les endpoints REST complets avec **pagination et filtrage** :
+
 - **Rucher :** `POST /ruchers`, `GET /ruchers?page=1&limit=10&search=...`, `GET /ruchers/:id`, `PUT /ruchers/:id`, `DELETE /ruchers/:id`
 - **Ruche :** `POST /ruchers/:rucherId/ruches`, `GET /ruchers/:rucherId/ruches?page=1&limit=10&statut=ACTIVE&type=DADANT`, `GET /ruches/:id`, `PUT /ruches/:id`, `DELETE /ruches/:id`
 - **Inspection :** `POST /ruches/:rucheId/inspections`, `GET /ruches/:rucheId/inspections?page=1&limit=10&dateFrom=...&dateTo=...&etatGeneral=BON`, `GET /inspections/:id`, `PUT /inspections/:id`, `DELETE /inspections/:id`
 
 **Fichiers additionnels pour pagination/filtrage :**
+
 - `src/interfaces/common/dto/pagination.dto.ts` — DTO partagé `PaginationQueryDto` (`page`, `limit`, `sortBy`, `sortOrder`) avec class-validator.
 - `src/interfaces/ruche/dto/filter-ruche.dto.ts` — Filtres optionnels : `statut`, `type`.
 - `src/interfaces/inspection/dto/filter-inspection.dto.ts` — Filtres optionnels : `dateFrom`, `dateTo`, `etatGeneral`.
 
 Chaque contrôleur :
+
 - Utilise `CommandBus` / `QueryBus` pour dispatcher les use cases.
 - Applique `@UseGuards(JwtAuthGuard)` sur toutes les routes.
 - Utilise `@CurrentUser()` pour injecter l'utilisateur.
@@ -232,6 +255,7 @@ Chaque contrôleur :
 - **Les endpoints GET de liste** acceptent `@Query() pagination: PaginationQueryDto` + filtres spécifiques et retournent `{ data: T[], meta: { total, page, limit, totalPages } }`.
 
 Ajouter les éléments transversaux :
+
 - **`HttpExceptionFilter`** : format d'erreur uniforme.
 - **`TransformInterceptor`** : wrapping des réponses `{ data, meta?, statusCode }`.
 - **`ValidationPipe`** : validation globale avec whitelist et forbidNonWhitelisted.
@@ -243,7 +267,9 @@ Assembler tous les modules dans `AppModule`.
 ---
 
 ### Step 8: Documentation Swagger & finalisation
+
 **Files:**
+
 - `src/main.ts` (mise à jour setup Swagger)
 - `docker-compose.yml`
 - `docker-compose.test.yml`
@@ -251,6 +277,7 @@ Assembler tous les modules dans `AppModule`.
 - `README.md`
 
 **What:**
+
 - Configurer Swagger dans `main.ts` : `SwaggerModule.setup()` avec titre, description, version, tags par domaine, schéma JWT Bearer.
 - Ajouter les décorateurs Swagger manquants (`@ApiTags`, `@ApiBearerAuth`, `@ApiOperation`, `@ApiResponse`, `@ApiQuery` pour pagination/filtres) sur les contrôleurs.
 - Documenter les endpoints d'auth incluant le flux refresh token.
@@ -264,7 +291,9 @@ Assembler tous les modules dans `AppModule`.
 ---
 
 ### Step 9: Tests unitaires & d'intégration complets
+
 **Files:**
+
 - `test/unit/domain/email.vo.spec.ts`
 - `test/unit/domain/coordonnees-gps.vo.spec.ts`
 - `test/unit/application/register-user.handler.spec.ts`
@@ -282,6 +311,7 @@ Assembler tous les modules dans `AppModule`.
 
 **What:**
 Compléter la couverture de tests :
+
 - **Unitaires domaine :** Value objects (Email valide/invalide, GPS limites), entités (instanciation, logique).
 - **Unitaires application :** Handlers isolés avec repositories mockés, vérification appels, gestion erreurs.
 - **Intégration :** Repositories Prisma contre l'instance Prisma Postgres de test (CRUD, relations, contraintes, pagination).
@@ -294,7 +324,9 @@ Configurer les scripts npm : `test`, `test:unit`, `test:integration`, `test:e2e`
 ---
 
 ### Step 10: Linting, hooks pre-commit & CI/CD (GitHub Actions)
+
 **Files:**
+
 - `.eslintrc.js` (finalisation règles)
 - `.prettierrc`
 - `.husky/pre-commit`
@@ -303,6 +335,7 @@ Configurer les scripts npm : `test`, `test:unit`, `test:integration`, `test:e2e`
 - `package.json` (scripts)
 
 **What:**
+
 - Configurer ESLint avec les règles TypeScript strictes et les règles NestJS.
 - Configurer Prettier (semi, singleQuote, trailingComma).
 - Installer Husky + lint-staged pour hooks pre-commit (lint + format + test unitaires).
@@ -318,26 +351,26 @@ Configurer les scripts npm : `test`, `test:unit`, `test:integration`, `test:e2e`
 
 ## Résumé des commits prévus
 
-| # | Commit | Couche |
-|---|--------|--------|
-| 1 | `chore: init NestJS project with dependencies` | Setup |
-| 2 | `feat: add Prisma schema and database config` | Infrastructure |
-| 3 | `feat: add domain layer (entities, VOs, repository interfaces)` | Domaine |
-| 4 | `feat: add application layer (CQRS commands & queries)` | Application |
-| 5 | `feat: add Prisma repository implementations` | Infrastructure |
-| 6 | `feat: add JWT auth with refresh tokens & security` | Sécurité |
-| 7 | `feat: add REST controllers, DTOs, pagination & filtering` | Interfaces |
-| 8 | `docs: add Swagger, Docker, README` | Documentation |
-| 9 | `test: add unit, integration & e2e tests` | Tests |
-| 10 | `chore: add linting, pre-commit hooks & CI/CD` | Qualité |
+| #   | Commit                                                          | Couche         |
+| --- | --------------------------------------------------------------- | -------------- |
+| 1   | `chore: init NestJS project with dependencies`                  | Setup          |
+| 2   | `feat: add Prisma schema and database config`                   | Infrastructure |
+| 3   | `feat: add domain layer (entities, VOs, repository interfaces)` | Domaine        |
+| 4   | `feat: add application layer (CQRS commands & queries)`         | Application    |
+| 5   | `feat: add Prisma repository implementations`                   | Infrastructure |
+| 6   | `feat: add JWT auth with refresh tokens & security`             | Sécurité       |
+| 7   | `feat: add REST controllers, DTOs, pagination & filtering`      | Interfaces     |
+| 8   | `docs: add Swagger, Docker, README`                             | Documentation  |
+| 9   | `test: add unit, integration & e2e tests`                       | Tests          |
+| 10  | `chore: add linting, pre-commit hooks & CI/CD`                  | Qualité        |
 
 ---
 
 ## Décisions confirmées
 
-| Décision | Choix |
-|----------|-------|
-| CI/CD | **GitHub Actions** |
-| Base de données | **Prisma Postgres** (instance hébergée via console.prisma.io) |
-| Authentification | **JWT avec refresh tokens** (rotation, révocation, stockage hashé en DB) |
+| Décision              | Choix                                                                            |
+| --------------------- | -------------------------------------------------------------------------------- |
+| CI/CD                 | **GitHub Actions**                                                               |
+| Base de données       | **Prisma Postgres** (instance hébergée via console.prisma.io)                    |
+| Authentification      | **JWT avec refresh tokens** (rotation, révocation, stockage hashé en DB)         |
 | Pagination & filtrage | **Inclus** sur tous les endpoints de liste (page, limit, sortBy, filtres métier) |

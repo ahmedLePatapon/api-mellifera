@@ -8,19 +8,17 @@ import { RUCHER_REPOSITORY } from '@shared/constants';
 
 @QueryHandler(ListRuchersQuery)
 export class ListRuchersHandler implements IQueryHandler<ListRuchersQuery> {
-    constructor(
-        @Inject(RUCHER_REPOSITORY)
-        private readonly rucherRepository: IRucherRepository,
-    ) { }
+  constructor(
+    @Inject(RUCHER_REPOSITORY)
+    private readonly rucherRepository: IRucherRepository,
+  ) {}
 
-    async execute(
-        query: ListRuchersQuery,
-    ): Promise<PaginatedResult<RucherEntity>> {
-        return this.rucherRepository.findAllByUserId(
-            query.userId,
-            query.pagination,
-            query.sort,
-            query.filters,
-        );
-    }
+  async execute(query: ListRuchersQuery): Promise<PaginatedResult<RucherEntity>> {
+    return this.rucherRepository.findAllByUserId(
+      query.userId,
+      query.pagination,
+      query.sort,
+      query.filters,
+    );
+  }
 }
