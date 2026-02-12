@@ -36,15 +36,15 @@ API REST de gestion apicole construite avec **NestJS**, **Prisma Postgres** et u
 
 ## Stack technique
 
-| Couche | Technologie |
-|--------|------------|
-| Framework | [NestJS](https://nestjs.com/) 11 |
-| ORM | [Prisma](https://www.prisma.io/) 7.3 avec Prisma Postgres |
-| Auth | JWT (access + refresh tokens), Passport, bcrypt |
-| Validation | class-validator, class-transformer, Joi |
-| Pattern | CQRS (`@nestjs/cqrs`), Clean Architecture, DDD léger |
-| Documentation | Swagger / OpenAPI (`@nestjs/swagger`) |
-| Langage | TypeScript 5 (mode strict) |
+| Couche        | Technologie                                               |
+| ------------- | --------------------------------------------------------- |
+| Framework     | [NestJS](https://nestjs.com/) 11                          |
+| ORM           | [Prisma](https://www.prisma.io/) 7.3 avec Prisma Postgres |
+| Auth          | JWT (access + refresh tokens), Passport, bcrypt           |
+| Validation    | class-validator, class-transformer, Joi                   |
+| Pattern       | CQRS (`@nestjs/cqrs`), Clean Architecture, DDD léger      |
+| Documentation | Swagger / OpenAPI (`@nestjs/swagger`)                     |
+| Langage       | TypeScript 5 (mode strict)                                |
 
 ---
 
@@ -62,6 +62,7 @@ src/
 ```
 
 **Flux d'une requête :**
+
 ```
 Client → Controller (interfaces/) → CommandBus/QueryBus → Handler (application/) → Repository interface (domain/) → Prisma Repository (infrastructure/) → DB
 ```
@@ -99,13 +100,13 @@ cp .env.example .env
 
 2. Renseigner les variables dans `.env` :
 
-| Variable | Description | Exemple |
-|----------|------------|---------|
-| `PORT` | Port du serveur HTTP | `3000` |
-| `DATABASE_URL` | URL Prisma Postgres (depuis console.prisma.io) | `prisma+postgres://accelerate.prisma-data.net/?api_key=...` |
-| `JWT_SECRET` | Clé secrète JWT (min 16 caractères) | `votre-clé-secrète-ici` |
-| `JWT_ACCESS_EXPIRATION` | Durée de l'access token | `15m` |
-| `JWT_REFRESH_EXPIRATION` | Durée du refresh token | `7d` |
+| Variable                 | Description                                    | Exemple                                                     |
+| ------------------------ | ---------------------------------------------- | ----------------------------------------------------------- |
+| `PORT`                   | Port du serveur HTTP                           | `3000`                                                      |
+| `DATABASE_URL`           | URL Prisma Postgres (depuis console.prisma.io) | `prisma+postgres://accelerate.prisma-data.net/?api_key=...` |
+| `JWT_SECRET`             | Clé secrète JWT (min 16 caractères)            | `votre-clé-secrète-ici`                                     |
+| `JWT_ACCESS_EXPIRATION`  | Durée de l'access token                        | `15m`                                                       |
+| `JWT_REFRESH_EXPIRATION` | Durée du refresh token                         | `7d`                                                        |
 
 ---
 
@@ -174,42 +175,42 @@ Toutes les routes, paramètres, DTOs et réponses y sont documentés. Utilisez l
 
 ### Auth
 
-| Méthode | Endpoint | Description | Auth |
-|---------|----------|-------------|------|
-| `POST` | `/api/v1/auth/register` | Créer un compte | Non |
-| `POST` | `/api/v1/auth/login` | Se connecter | Non |
-| `POST` | `/api/v1/auth/refresh` | Rafraîchir les tokens | Refresh token |
-| `POST` | `/api/v1/auth/logout` | Se déconnecter | Oui |
+| Méthode | Endpoint                | Description           | Auth          |
+| ------- | ----------------------- | --------------------- | ------------- |
+| `POST`  | `/api/v1/auth/register` | Créer un compte       | Non           |
+| `POST`  | `/api/v1/auth/login`    | Se connecter          | Non           |
+| `POST`  | `/api/v1/auth/refresh`  | Rafraîchir les tokens | Refresh token |
+| `POST`  | `/api/v1/auth/logout`   | Se déconnecter        | Oui           |
 
 ### Ruchers
 
-| Méthode | Endpoint | Description | Auth |
-|---------|----------|-------------|------|
-| `POST` | `/api/v1/ruchers` | Créer un rucher | Oui |
-| `GET` | `/api/v1/ruchers` | Lister ses ruchers | Oui |
-| `GET` | `/api/v1/ruchers/:id` | Détail d'un rucher | Oui |
-| `PUT` | `/api/v1/ruchers/:id` | Modifier un rucher | Oui |
-| `DELETE` | `/api/v1/ruchers/:id` | Supprimer un rucher | Oui |
+| Méthode  | Endpoint              | Description         | Auth |
+| -------- | --------------------- | ------------------- | ---- |
+| `POST`   | `/api/v1/ruchers`     | Créer un rucher     | Oui  |
+| `GET`    | `/api/v1/ruchers`     | Lister ses ruchers  | Oui  |
+| `GET`    | `/api/v1/ruchers/:id` | Détail d'un rucher  | Oui  |
+| `PUT`    | `/api/v1/ruchers/:id` | Modifier un rucher  | Oui  |
+| `DELETE` | `/api/v1/ruchers/:id` | Supprimer un rucher | Oui  |
 
 ### Ruches
 
-| Méthode | Endpoint | Description | Auth |
-|---------|----------|-------------|------|
-| `POST` | `/api/v1/ruchers/:rucherId/ruches` | Créer une ruche | Oui |
-| `GET` | `/api/v1/ruchers/:rucherId/ruches` | Lister les ruches d'un rucher | Oui |
-| `GET` | `/api/v1/ruches/:id` | Détail d'une ruche | Oui |
-| `PUT` | `/api/v1/ruches/:id` | Modifier une ruche | Oui |
-| `DELETE` | `/api/v1/ruches/:id` | Supprimer une ruche | Oui |
+| Méthode  | Endpoint                           | Description                   | Auth |
+| -------- | ---------------------------------- | ----------------------------- | ---- |
+| `POST`   | `/api/v1/ruchers/:rucherId/ruches` | Créer une ruche               | Oui  |
+| `GET`    | `/api/v1/ruchers/:rucherId/ruches` | Lister les ruches d'un rucher | Oui  |
+| `GET`    | `/api/v1/ruches/:id`               | Détail d'une ruche            | Oui  |
+| `PUT`    | `/api/v1/ruches/:id`               | Modifier une ruche            | Oui  |
+| `DELETE` | `/api/v1/ruches/:id`               | Supprimer une ruche           | Oui  |
 
 ### Inspections
 
-| Méthode | Endpoint | Description | Auth |
-|---------|----------|-------------|------|
-| `POST` | `/api/v1/ruches/:rucheId/inspections` | Créer une inspection | Oui |
-| `GET` | `/api/v1/ruches/:rucheId/inspections` | Lister les inspections d'une ruche | Oui |
-| `GET` | `/api/v1/inspections/:id` | Détail d'une inspection | Oui |
-| `PUT` | `/api/v1/inspections/:id` | Modifier une inspection | Oui |
-| `DELETE` | `/api/v1/inspections/:id` | Supprimer une inspection | Oui |
+| Méthode  | Endpoint                              | Description                        | Auth |
+| -------- | ------------------------------------- | ---------------------------------- | ---- |
+| `POST`   | `/api/v1/ruches/:rucheId/inspections` | Créer une inspection               | Oui  |
+| `GET`    | `/api/v1/ruches/:rucheId/inspections` | Lister les inspections d'une ruche | Oui  |
+| `GET`    | `/api/v1/inspections/:id`             | Détail d'une inspection            | Oui  |
+| `PUT`    | `/api/v1/inspections/:id`             | Modifier une inspection            | Oui  |
+| `DELETE` | `/api/v1/inspections/:id`             | Supprimer une inspection           | Oui  |
 
 ---
 
@@ -238,12 +239,12 @@ Le refresh token est **rotatif** : chaque appel à `/auth/refresh` révoque l'an
 
 Tous les endpoints de liste supportent la pagination et le tri :
 
-| Paramètre | Type | Défaut | Description |
-|-----------|------|--------|-------------|
-| `page` | number | `1` | Numéro de la page |
-| `limit` | number | `10` | Éléments par page (max 100) |
-| `sortBy` | string | — | Champ de tri (ex: `createdAt`, `nom`) |
-| `sortOrder` | string | `desc` | Ordre de tri (`asc` ou `desc`) |
+| Paramètre   | Type   | Défaut | Description                           |
+| ----------- | ------ | ------ | ------------------------------------- |
+| `page`      | number | `1`    | Numéro de la page                     |
+| `limit`     | number | `10`   | Éléments par page (max 100)           |
+| `sortBy`    | string | —      | Champ de tri (ex: `createdAt`, `nom`) |
+| `sortOrder` | string | `desc` | Ordre de tri (`asc` ou `desc`)        |
 
 ### Filtres spécifiques
 
@@ -284,10 +285,81 @@ Tous les endpoints de liste supportent la pagination et le tri :
 
 ## Scripts disponibles
 
-| Commande | Description |
-|----------|-------------|
-| `npm run build` | Compiler le projet TypeScript |
-| `npm run start` | Lancer en production |
+| Commande            | Description                          |
+| ------------------- | ------------------------------------ |
+| `npm run build`     | Compiler le projet TypeScript        |
+| `npm run start`     | Lancer en production                 |
 | `npm run start:dev` | Lancer en mode développement (watch) |
-| `npm run lint` | Vérifier le code avec ESLint |
-| `npm run format` | Formater le code avec Prettier |
+| `npm run lint`      | Vérifier le code avec ESLint         |
+| `npm run format`    | Formater le code avec Prettier       |
+
+---
+
+## 🔍 Qualité de code
+
+### Linting & Formatage
+
+```bash
+# Vérifier le linting
+npm run lint
+
+# Corriger automatiquement les erreurs de lint
+npm run lint:fix
+
+# Vérifier le formatage (CI-friendly, pas de modification)
+npm run format:check
+
+# Formater tous les fichiers
+npm run format
+```
+
+### Pre-commit Hooks
+
+Le projet utilise **Husky** + **lint-staged** pour exécuter automatiquement le linting et le formatage avant chaque commit.
+
+Les fichiers `.ts` passent par ESLint (avec `--fix`) puis Prettier. Les fichiers `.js`, `.json` et `.md` passent uniquement par Prettier.
+
+La configuration se trouve dans :
+
+- `.husky/pre-commit` — hook git pre-commit
+- `lint-staged.config.js` — règles lint-staged
+
+### Stack Qualité
+
+|       Outil |     Version (approx.)     | Rôle                                |
+| ----------: | :-----------------------: | ----------------------------------- |
+|      ESLint | ^8.x / @typescript-eslint | Linting TypeScript                  |
+|    Prettier |           ^3.x            | Formatage de code                   |
+|       Husky |           ^9.x            | Git hooks                           |
+| lint-staged |          latest           | Lint sur fichiers stagés uniquement |
+
+## 🚀 CI/CD — GitHub Actions
+
+Le pipeline CI s'exécute automatiquement sur :
+
+- **Push** sur `main` et `feat/**`
+- **Pull requests** vers `main`
+
+### Jobs du pipeline
+
+```
+lint → test-unit ─┐
+                   ├──→ build
+lint → test-e2e  ─┘
+```
+
+| Job                     | Description                                        |
+| ----------------------- | -------------------------------------------------- |
+| **Lint & Format Check** | Vérifie le formatage Prettier et les règles ESLint |
+| **Unit Tests**          | Exécute les tests unitaires (`test/unit/`)         |
+| **E2E Tests**           | Exécute les tests end-to-end (`test/e2e/`) avec DB |
+| **Build**               | Compile le projet TypeScript                       |
+
+### Secrets GitHub requis
+
+| Secret         | Description                                                          |
+| -------------- | -------------------------------------------------------------------- |
+| `DATABASE_URL` | URL de connexion Prisma Postgres (instance de test)                  |
+| `JWT_SECRET`   | _(optionnel)_ Clé secrète JWT — valeur par défaut utilisée si absent |
+
+Pour configurer : **Repository** → **Settings** → **Secrets and variables** → **Actions** → **New repository secret**.

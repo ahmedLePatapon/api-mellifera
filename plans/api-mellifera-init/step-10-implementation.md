@@ -467,9 +467,29 @@ Ajouter le bloc suivant à la fin du fichier `.env.example` existant :
 
 ##### Step 8 Verification Checklist
 
-- [ ] `cat .env.example` affiche les notes CI en bas du fichier
+- [x] Ajouter les commentaires CI à la fin de `.env.example` :
+
+Ajouter le bloc suivant à la fin du fichier `.env.example` existant :
+
+```dotenv
+
+# ──────────────────────────────────────────
+# CI/CD (GitHub Actions)
+# ──────────────────────────────────────────
+# Ces variables sont configurées comme secrets dans GitHub Actions.
+# Voir .github/workflows/ci.yml pour les détails.
+# Secrets requis dans GitHub :
+#   - DATABASE_URL     : URL de la base Prisma Postgres de test
+#   - JWT_SECRET       : (optionnel) clé secrète JWT pour les tests CI
+```
+
+##### Step 8 Verification Checklist
+
+- [x] `cat .env.example` affiche les notes CI en bas du fichier
 
 #### Step 8 STOP & COMMIT
+
+**STOP & COMMIT:** Agent must stop ici et attendre que vous testiez, ajoutiez et commitiez les changements.
 
 **STOP & COMMIT:** Agent must stop here and wait for the user to test, stage, and commit the change.
 
@@ -553,8 +573,9 @@ Pour configurer : **Repository** → **Settings** → **Secrets and variables** 
 ````
 
 ##### Step 9 Verification Checklist
-- [ ] Le `README.md` contient les sections "Qualité de code" et "CI/CD — GitHub Actions"
-- [ ] Les commandes documentées fonctionnent : `npm run lint`, `npm run format:check`
+-##### Step 9 Verification Checklist
+- [x] Le `README.md` contient les sections "Qualité de code" et "CI/CD — GitHub Actions"
+- [x] Les commandes documentées fonctionnent : `npm run lint`, `npm run format:check`
 
 #### Step 9 STOP & COMMIT
 **STOP & COMMIT:** Agent must stop here and wait for the user to test, stage, and commit the change.
