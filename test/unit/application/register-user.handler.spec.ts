@@ -29,7 +29,9 @@ describe('RegisterUserHandler', () => {
 
     const result = await handler.execute(command);
 
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(userRepository.findByEmail).toHaveBeenCalledWith('test@example.com');
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(userRepository.create).toHaveBeenCalled();
     expect(result.nom).toBe('Dupont');
     expect(result.prenom).toBe('Jean');
@@ -55,6 +57,7 @@ describe('RegisterUserHandler', () => {
     const command = new RegisterUserCommand('test@example.com', 'Password123!', 'Dupont', 'Jean');
 
     await expect(handler.execute(command)).rejects.toThrow(ConflictException);
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(userRepository.create).not.toHaveBeenCalled();
   });
 

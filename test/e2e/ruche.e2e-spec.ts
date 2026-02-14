@@ -1,6 +1,7 @@
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import * as request from 'supertest';
+import { req } from '../helpers/supertest-helpers';
 import { AppModule } from '../../src/app.module';
 import { PrismaService } from '@infrastructure/prisma/prisma.service';
 import {
@@ -63,7 +64,7 @@ describe('Ruche (e2e)', () => {
     await app.init();
 
     // Register and get token
-    const authRes = (await request(app.getHttpServer()).post('/api/v1/auth/register').send({
+    const authRes = (await req(app).post('/api/v1/auth/register').send({
       email: 'ruche@test.com',
       password: 'Password123!',
       nom: 'Test',
@@ -72,7 +73,7 @@ describe('Ruche (e2e)', () => {
     accessToken = authRes.body.data.tokens.accessToken;
 
     // Create a rucher
-    const rucherRes = await request(app.getHttpServer())
+    const rucherRes = await req(app)
       .post('/api/v1/ruchers')
       .set('Authorization', `Bearer ${accessToken}`)
       .send({ nom: 'Rucher pour ruches' });
@@ -85,7 +86,7 @@ describe('Ruche (e2e)', () => {
 
   describe('POST /api/v1/ruchers/:rucherId/ruches', () => {
     it('should create a ruche', async () => {
-      const res = (await request(app.getHttpServer())
+      const res = (await req(app)
         .post(`/api/v1/ruchers/${rucherId}/ruches`)
         .set('Authorization', `Bearer ${accessToken}`)
         .send({ nom: 'Ruche Alpha', type: 'DADANT', statut: 'ACTIVE' })
@@ -97,7 +98,7 @@ describe('Ruche (e2e)', () => {
     });
 
     it('should return 404 for unknown rucher', async () => {
-      await request(app.getHttpServer())
+      await req(app)
         .post('/api/v1/ruchers/00000000-0000-0000-0000-000000000000/ruches')
         .set('Authorization', `Bearer ${accessToken}`)
         .send({ nom: 'Ruche Test' })
@@ -107,12 +108,12 @@ describe('Ruche (e2e)', () => {
 
   describe('GET /api/v1/ruchers/:rucherId/ruches', () => {
     it('should list ruches with pagination', async () => {
-      await request(app.getHttpServer())
+      await req(app)
         .post(`/api/v1/ruchers/${rucherId}/ruches`)
         .set('Authorization', `Bearer ${accessToken}`)
         .send({ nom: 'Ruche Liste' });
 
-      const res = (await request(app.getHttpServer())
+      const res = (await req(app)
         .get(`/api/v1/ruchers/${rucherId}/ruches`)
         .set('Authorization', `Bearer ${accessToken}`)
         .expect(200)) as request.Response;
@@ -125,14 +126,14 @@ describe('Ruche (e2e)', () => {
 
   describe('GET /api/v1/ruches/:id', () => {
     it('should get a ruche by id', async () => {
-      const createRes = (await request(app.getHttpServer())
+      const createRes = (await req(app)
         .post(`/api/v1/ruchers/${rucherId}/ruches`)
         .set('Authorization', `Bearer ${accessToken}`)
         .send({ nom: 'Ruche Detail' })) as request.Response;
 
       const id = createRes.body.data.id;
 
-      const res = (await request(app.getHttpServer())
+      const res = (await req(app)
         .get(`/api/v1/ruches/${id}`)
         .set('Authorization', `Bearer ${accessToken}`)
         .expect(200)) as request.Response;
@@ -143,14 +144,14 @@ describe('Ruche (e2e)', () => {
 
   describe('PUT /api/v1/ruches/:id', () => {
     it('should update a ruche', async () => {
-      const createRes = (await request(app.getHttpServer())
+      const createRes = (await req(app)
         .post(`/api/v1/ruchers/${rucherId}/ruches`)
         .set('Authorization', `Bearer ${accessToken}`)
         .send({ nom: 'Ancien' })) as request.Response;
 
       const id = createRes.body.data.id;
 
-      const res = (await request(app.getHttpServer())
+      const res = (await req(app)
         .put(`/api/v1/ruches/${id}`)
         .set('Authorization', `Bearer ${accessToken}`)
         .send({ nom: 'Nouveau', statut: 'INACTIVE' })
@@ -162,14 +163,14 @@ describe('Ruche (e2e)', () => {
 
   describe('DELETE /api/v1/ruches/:id', () => {
     it('should delete a ruche', async () => {
-      const createRes = await request(app.getHttpServer())
+      const createRes = await req(app)
         .post(`/api/v1/ruchers/${rucherId}/ruches`)
         .set('Authorization', `Bearer ${accessToken}`)
         .send({ nom: 'A Supprimer' });
 
       const id = createRes.body.data.id;
 
-      await request(app.getHttpServer())
+      await req(app)
         .delete(`/api/v1/ruches/${id}`)
         .set('Authorization', `Bearer ${accessToken}`)
         .expect(204);

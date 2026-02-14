@@ -130,6 +130,28 @@ npx prisma generate
 npx prisma migrate deploy
 ```
 
+### Seed (peupler la base)
+
+Un script de seed est fourni pour insérer des données de démonstration (utilisateurs, rucher, ruche, inspection).
+
+1. Assurez-vous que `DATABASE_URL` dans votre `.env` pointe vers votre instance Postgres.
+
+2. Exécuter le seed :
+
+Si `DATABASE_URL` est présent dans l'environnement (exporté ou chargé par votre terminal) :
+
+```bash
+npm run seed
+```
+
+Ou, préfixer la commande avec l'URL (pratique pour CI ou une URL fournie ponctuellement) :
+
+```bash
+DATABASE_URL="postgres://user:pass@host:5432/dbname?sslmode=require" npm run seed
+```
+
+Le script utilise `ts-node` et le client Prisma généré, il appliquera des upserts pour éviter les doublons.
+
 ### Créer une nouvelle migration (développement)
 
 ```bash

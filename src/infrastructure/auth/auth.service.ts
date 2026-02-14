@@ -128,13 +128,13 @@ export class AuthService {
       role: user.role,
     };
 
-    const accessToken = this.jwtService.sign(payload, {
+    const accessToken = this.jwtService.sign(payload as Record<string, unknown>, {
       secret: this.configService.get<string>('jwt.secret'),
       expiresIn: this.configService.get<string>('jwt.accessExpiration') ?? '15m',
     });
 
     const refreshPayload = { ...payload, type: 'refresh' };
-    const refreshToken = this.jwtService.sign(refreshPayload, {
+    const refreshToken = this.jwtService.sign(refreshPayload as Record<string, unknown>, {
       secret: this.configService.get<string>('jwt.secret'),
       expiresIn: this.configService.get<string>('jwt.refreshExpiration') ?? '7d',
     });

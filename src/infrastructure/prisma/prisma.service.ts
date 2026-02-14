@@ -1,5 +1,5 @@
 import { Injectable, OnModuleInit, OnModuleDestroy, Logger } from '@nestjs/common';
-import { PrismaClient } from '../../generated/prisma/client';
+import { PrismaClient, type Prisma } from '../../generated/prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
 import type { PoolConfig } from 'pg';
 
@@ -12,8 +12,8 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
     const dbUrl = process.env.DATABASE_URL || '';
     const poolConfig: PoolConfig = { connectionString: dbUrl };
     const adapter = new PrismaPg(poolConfig);
-    // cast to a generic record to avoid using `any` while keeping options flexible for the generated client
-    super({ adapter, log: [] } as unknown as Record<string, unknown>);
+    // Cast to the generated Prisma client options type so the constructor accepts it.
+    super({ adapter, log: [] } as unknown as Prisma.PrismaClientOptions);
   }
 
   async onModuleInit(): Promise<void> {

@@ -2,6 +2,7 @@ import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import * as request from 'supertest';
 import { AppModule } from '../../src/app.module';
+import { req } from '../helpers/supertest-helpers';
 import { PrismaService } from '@infrastructure/prisma/prisma.service';
 import {
   USER_REPOSITORY,
@@ -81,7 +82,7 @@ describe('Auth (e2e)', () => {
 
   describe('POST /api/v1/auth/register', () => {
     it('should register a new user and return tokens', async () => {
-      const res = (await request(app.getHttpServer())
+      const res = (await req(app)
         .post('/api/v1/auth/register')
         .send(validUser)
         .expect(201)) as request.Response;
@@ -96,9 +97,9 @@ describe('Auth (e2e)', () => {
     });
 
     it('should return 409 for duplicate email', async () => {
-      await request(app.getHttpServer()).post('/api/v1/auth/register').send(validUser).expect(201);
+      await req(app).post('/api/v1/auth/register').send(validUser).expect(201);
 
-      const res = (await request(app.getHttpServer())
+      const res = (await req(app)
         .post('/api/v1/auth/register')
         .send(validUser)
         .expect(409)) as request.Response;
@@ -107,18 +108,15 @@ describe('Auth (e2e)', () => {
     });
 
     it('should return 400 for missing fields', async () => {
-      await request(app.getHttpServer())
-        .post('/api/v1/auth/register')
-        .send({ email: 'test@test.com' })
-        .expect(400);
+      await req(app).post('/api/v1/auth/register').send({ email: 'test@test.com' }).expect(400);
     });
   });
 
   describe('POST /api/v1/auth/login', () => {
     it('should login and return tokens', async () => {
-      await request(app.getHttpServer()).post('/api/v1/auth/register').send(validUser).expect(201);
+      await req(app).post('/api/v1/auth/register').send(validUser).expect(201);
 
-      const res = (await request(app.getHttpServer())
+      const res = (await req(app)
         .post('/api/v1/auth/login')
         .send({ email: validUser.email, password: validUser.password })
         .expect(200)) as request.Response;
@@ -128,16 +126,16 @@ describe('Auth (e2e)', () => {
     });
 
     it('should return 401 for invalid password', async () => {
-      await request(app.getHttpServer()).post('/api/v1/auth/register').send(validUser).expect(201);
+      await req(app).post('/api/v1/auth/register').send(validUser).expect(201);
 
-      await request(app.getHttpServer())
+      await req(app)
         .post('/api/v1/auth/login')
         .send({ email: validUser.email, password: 'wrong-password' })
         .expect(401);
     });
 
     it('should return 401 for non-existent email', async () => {
-      await request(app.getHttpServer())
+      await req(app)
         .post('/api/v1/auth/login')
         .send({ email: 'unknown@test.com', password: 'Password123!' })
         .expect(401);
@@ -146,14 +144,14 @@ describe('Auth (e2e)', () => {
 
   describe('POST /api/v1/auth/refresh', () => {
     it('should refresh tokens with a valid refresh token', async () => {
-      const registerRes = (await request(app.getHttpServer())
+      const registerRes = (await req(app)
         .post('/api/v1/auth/register')
         .send(validUser)
         .expect(201)) as request.Response;
 
       const refreshToken = registerRes.body.data.tokens.refreshToken;
 
-      const res = (await request(app.getHttpServer())
+      const res = (await req(app)
         .post('/api/v1/auth/refresh')
         .send({ refreshToken })
         .expect(200)) as request.Response;
@@ -163,7 +161,7 @@ describe('Auth (e2e)', () => {
     });
 
     it('should reject an already-used refresh token (rotation)', async () => {
-      const registerRes = (await request(app.getHttpServer())
+      const registerRes = (await req(app)
         .post('/api/v1/auth/register')
         .send(validUser)
         .expect(201)) as request.Response;
@@ -171,29 +169,20 @@ describe('Auth (e2e)', () => {
       const refreshToken = registerRes.body.data.tokens.refreshToken;
 
       // First refresh — should succeed
-      await request(app.getHttpServer())
-        .post('/api/v1/auth/refresh')
-        .send({ refreshToken })
-        .expect(200);
+      await req(app).post('/api/v1/auth/refresh').send({ refreshToken }).expect(200);
 
       // Second refresh with same token — should fail (revoked)
-      await request(app.getHttpServer())
-        .post('/api/v1/auth/refresh')
-        .send({ refreshToken })
-        .expect(401);
+      await req(app).post('/api/v1/auth/refresh').send({ refreshToken }).expect(401);
     });
   });
 
   describe('POST /api/v1/auth/logout', () => {
     it('should logout and revoke the refresh token', async () => {
-      const registerRes = await request(app.getHttpServer())
-        .post('/api/v1/auth/register')
-        .send(validUser)
-        .expect(201);
+      const registerRes = await req(app).post('/api/v1/auth/register').send(validUser).expect(201);
 
       const { accessToken, refreshToken } = registerRes.body.data.tokens;
 
-      const res = (await request(app.getHttpServer())
+      const res = (await req(app)
         .post('/api/v1/auth/logout')
         .set('Authorization', `Bearer ${accessToken}`)
         .send({ refreshToken })
@@ -203,10 +192,7 @@ describe('Auth (e2e)', () => {
     });
 
     it('should return 401 without access token', async () => {
-      await request(app.getHttpServer())
-        .post('/api/v1/auth/logout')
-        .send({ refreshToken: 'some-token' })
-        .expect(401);
+      await req(app).post('/api/v1/auth/logout').send({ refreshToken: 'some-token' }).expect(401);
     });
   });
 });

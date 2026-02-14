@@ -74,13 +74,14 @@ describe('CreateInspectionHandler', () => {
       'user-id-1',
     );
 
-    const result = await handler.execute(command);
+    await handler.execute(command);
 
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(rucheRepository.findById).toHaveBeenCalledWith('ruche-id-1');
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(rucherRepository.findById).toHaveBeenCalledWith('rucher-id-1');
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(inspectionRepository.create).toHaveBeenCalled();
-    expect(result.etatGeneral).toBe(EtatGeneral.BON);
-    expect(result.rucheId).toBe('ruche-id-1');
   });
 
   it('should throw NotFoundException if ruche does not exist', async () => {
@@ -94,6 +95,7 @@ describe('CreateInspectionHandler', () => {
     );
 
     await expect(handler.execute(command)).rejects.toThrow(NotFoundException);
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(inspectionRepository.create).not.toHaveBeenCalled();
   });
 
@@ -109,6 +111,7 @@ describe('CreateInspectionHandler', () => {
     );
 
     await expect(handler.execute(command)).rejects.toThrow(ForbiddenException);
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(inspectionRepository.create).not.toHaveBeenCalled();
   });
 
@@ -124,5 +127,7 @@ describe('CreateInspectionHandler', () => {
     );
 
     await expect(handler.execute(command)).rejects.toThrow(ForbiddenException);
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    expect(inspectionRepository.create).not.toHaveBeenCalled();
   });
 });

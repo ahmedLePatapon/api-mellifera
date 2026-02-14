@@ -31,6 +31,7 @@ describe('CreateRucherHandler', () => {
 
     const result = await handler.execute(command);
 
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(rucherRepository.create).toHaveBeenCalled();
     expect(result.nom).toBe('Rucher des Tilleuls');
     expect(result.userId).toBe('user-id-1');
@@ -58,6 +59,7 @@ describe('CreateRucherHandler', () => {
     const command = new CreateRucherCommand('', 'user-id-1');
 
     await expect(handler.execute(command)).rejects.toThrow('Rucher nom cannot be empty');
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(rucherRepository.create).not.toHaveBeenCalled();
   });
 });

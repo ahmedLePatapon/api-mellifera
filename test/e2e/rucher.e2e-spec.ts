@@ -1,6 +1,7 @@
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import * as request from 'supertest';
+import { req } from '../helpers/supertest-helpers';
 import { AppModule } from '../../src/app.module';
 import { PrismaService } from '@infrastructure/prisma/prisma.service';
 import {
@@ -65,7 +66,7 @@ describe('Rucher (e2e)', () => {
     await app.init();
 
     // Register and get access token
-    const res = (await request(app.getHttpServer()).post('/api/v1/auth/register').send({
+    const res = (await req(app).post('/api/v1/auth/register').send({
       email: 'rucher@test.com',
       password: 'Password123!',
       nom: 'Test',
@@ -80,7 +81,7 @@ describe('Rucher (e2e)', () => {
 
   describe('POST /api/v1/ruchers', () => {
     it('should create a rucher', async () => {
-      const res = await request(app.getHttpServer())
+      const res = await req(app)
         .post('/api/v1/ruchers')
         .set('Authorization', `Bearer ${accessToken}`)
         .send({ nom: 'Rucher des Tilleuls', adresse: '12 chemin des Abeilles' })
@@ -92,11 +93,11 @@ describe('Rucher (e2e)', () => {
     });
 
     it('should return 401 without token', async () => {
-      await request(app.getHttpServer()).post('/api/v1/ruchers').send({ nom: 'Test' }).expect(401);
+      await req(app).post('/api/v1/ruchers').send({ nom: 'Test' }).expect(401);
     });
 
     it('should return 400 for missing nom', async () => {
-      await request(app.getHttpServer())
+      await req(app)
         .post('/api/v1/ruchers')
         .set('Authorization', `Bearer ${accessToken}`)
         .send({})
@@ -107,12 +108,12 @@ describe('Rucher (e2e)', () => {
   describe('GET /api/v1/ruchers', () => {
     it('should list ruchers with pagination meta', async () => {
       // Create a rucher first
-      await request(app.getHttpServer())
+      await req(app)
         .post('/api/v1/ruchers')
         .set('Authorization', `Bearer ${accessToken}`)
         .send({ nom: 'Rucher Liste' });
 
-      const res = await request(app.getHttpServer())
+      const res = await req(app)
         .get('/api/v1/ruchers')
         .set('Authorization', `Bearer ${accessToken}`)
         .expect(200);
@@ -128,14 +129,14 @@ describe('Rucher (e2e)', () => {
 
   describe('GET /api/v1/ruchers/:id', () => {
     it('should get a rucher by id', async () => {
-      const createRes = await request(app.getHttpServer())
+      const createRes = await req(app)
         .post('/api/v1/ruchers')
         .set('Authorization', `Bearer ${accessToken}`)
         .send({ nom: 'Rucher Detail' });
 
       const id = createRes.body.data.id;
 
-      const res = await request(app.getHttpServer())
+      const res = await req(app)
         .get(`/api/v1/ruchers/${id}`)
         .set('Authorization', `Bearer ${accessToken}`)
         .expect(200);
@@ -144,7 +145,7 @@ describe('Rucher (e2e)', () => {
     });
 
     it('should return 404 for unknown id', async () => {
-      await request(app.getHttpServer())
+      await req(app)
         .get('/api/v1/ruchers/00000000-0000-0000-0000-000000000000')
         .set('Authorization', `Bearer ${accessToken}`)
         .expect(404);
@@ -153,14 +154,14 @@ describe('Rucher (e2e)', () => {
 
   describe('PUT /api/v1/ruchers/:id', () => {
     it('should update a rucher', async () => {
-      const createRes = await request(app.getHttpServer())
+      const createRes = await req(app)
         .post('/api/v1/ruchers')
         .set('Authorization', `Bearer ${accessToken}`)
         .send({ nom: 'Ancien Nom' });
 
       const id = createRes.body.data.id;
 
-      const res = await request(app.getHttpServer())
+      const res = await req(app)
         .put(`/api/v1/ruchers/${id}`)
         .set('Authorization', `Bearer ${accessToken}`)
         .send({ nom: 'Nouveau Nom' })
@@ -172,20 +173,20 @@ describe('Rucher (e2e)', () => {
 
   describe('DELETE /api/v1/ruchers/:id', () => {
     it('should delete a rucher', async () => {
-      const createRes = await request(app.getHttpServer())
+      const createRes = await req(app)
         .post('/api/v1/ruchers')
         .set('Authorization', `Bearer ${accessToken}`)
         .send({ nom: 'A Supprimer' });
 
       const id = createRes.body.data.id;
 
-      await request(app.getHttpServer())
+      await req(app)
         .delete(`/api/v1/ruchers/${id}`)
         .set('Authorization', `Bearer ${accessToken}`)
         .expect(204);
 
       // Verify it's gone
-      await request(app.getHttpServer())
+      await req(app)
         .get(`/api/v1/ruchers/${id}`)
         .set('Authorization', `Bearer ${accessToken}`)
         .expect(404);

@@ -54,7 +54,10 @@ describe('CreateRucheHandler', () => {
 
     const result = await handler.execute(command);
 
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(rucherRepository.findById).toHaveBeenCalledWith('rucher-id-1');
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(rucheRepository.create).toHaveBeenCalled();
     expect(result.nom).toBe('Ruche Alpha');
     expect(result.type).toBe(TypeRuche.DADANT);
@@ -67,6 +70,7 @@ describe('CreateRucheHandler', () => {
     const command = new CreateRucheCommand('Ruche Alpha', 'unknown-rucher', 'user-id-1');
 
     await expect(handler.execute(command)).rejects.toThrow(NotFoundException);
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(rucheRepository.create).not.toHaveBeenCalled();
   });
 
@@ -76,6 +80,7 @@ describe('CreateRucheHandler', () => {
     const command = new CreateRucheCommand('Ruche Alpha', 'rucher-id-1', 'other-user-id');
 
     await expect(handler.execute(command)).rejects.toThrow(ForbiddenException);
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(rucheRepository.create).not.toHaveBeenCalled();
   });
 });

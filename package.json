@@ -23,7 +23,9 @@
     "prisma:migrate": "prisma migrate dev",
     "prisma:migrate:deploy": "prisma migrate deploy",
     "prisma:studio": "prisma studio",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "seed": "ts-node prisma/seed.ts",
+    "prisma:seed": "ts-node prisma/seed.ts"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.0",
